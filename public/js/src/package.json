@@ -1,0 +1,6 @@
+{
+  "name": "qiwi-admin",
+  "dependencies": {
+    "uikit": "^3.0.0-beta.33"
+  }
+}

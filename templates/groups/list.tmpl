@@ -1,0 +1,24 @@
+<div class="uk-margin">
+  <form action="/groups/create" class="uk-form" method="post">
+    <div class="uk-flex uk-flex-bottom">
+      <div class="uk-width-1-3">
+        <label for="name">Создать группу</label>
+        <input type="text" id="name" name="name" class="uk-input" placeholder="Название группы">
+      </div>
+      <div class="uk-width-expand uk-margin-left">
+        <button class="uk-button uk-button-primary">Создать</button>
+      </div>
+    </div>
+
+  </form>
+</div>
+<div class="uk-margin">
+  <div class="uk-flex uk-flex-wrap">
+    {{ range .groups }}
+      <a href="/groups/{{ .ID }}"><div class="uk-card uk-card-default uk-card-body uk-card-hover uk-margin-left uk-margin-bottom">
+          <h3 class="uk-card-title">{{ .Name }}</h3>
+          <p><b></b></p>
+      </div></a>
+      {{ end }}
+    </div>
+</div>

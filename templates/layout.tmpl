@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>{{ .Title }}</title>
+  <link rel="stylesheet" href="/css/uikit.min.css">
+</head>
+<body>
+  <div class="uk-container">
+    <nav class="uk-navbar uk-navbar-container" uk-navbar>
+        <div class="uk-navbar-left">
+        <ul class="uk-navbar-nav">
+          <li class="uk-active"><a href="/dashboard">Мои группы</a></li>
+          <!--<li class="uk-active"><a href="/transfer">Перевести</a></li>
+          <li class="uk-active"><a href="/check">Проверить токен</a></li>
+          <li class="uk-active"><a href="/setting">Настройки</a></li>-->
+        </ul>
+      </div>
+        <div class="uk-navbar-right">
+          <ul class="uk-navbar-nav">
+              <li>
+                  <a href="/logout">Выйти</a>
+              </li>
+          </ul>
+      </div>
+    </nav>
+
+  {{ yield }}
+    </div>
+  <!-- <script src="/js/bundle.js"></script> -->
+</body>
+</html>

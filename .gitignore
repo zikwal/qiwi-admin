@@ -1,0 +1,5 @@
+.skeleton
+node_modules
+data/*
+!data/.gitkeep
+qiwi-admin

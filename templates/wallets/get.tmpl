@@ -1,0 +1,17 @@
+<table class="uk-table uk-table-divider uk-table-striped">
+    <caption>Последние транзакции:</caption>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Сумма</th>
+            <th>Дата</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{ range .transactions}}<tr>
+            <td>{{ .ID }}</td>
+            <td class="uk-text-{{ if eq .TxnType 1 }}success{{else}}danger{{end}}">{{ if eq .TxnType 1 }}+{{else}}-{{end}} {{ .Amount }}</td>
+            <td>{{ .CreatedAt.Format "02.01.2006 15:04"}}</td>
+        </tr>{{ end }}
+    </tbody>
+</table>
