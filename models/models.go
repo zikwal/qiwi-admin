@@ -15,6 +15,11 @@ var (
 	db *gorm.DB
 )
 
+// DB returns db for global usage
+func DB() *gorm.DB {
+	return db
+}
+
 // NewContext init db instance
 func NewContext() (err error) {
 	db, err = gorm.Open("sqlite3", "data/db.sqlite")

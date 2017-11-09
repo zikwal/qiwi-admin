@@ -40,7 +40,7 @@ func Sync(walletID uint) (err error) {
 
 	txns, err := qiwi.GetLastTxns(wallet.Token, wallet.WalletID)
 	if err != nil {
-		return
+		return err
 	}
 
 	var (
@@ -56,6 +56,23 @@ func Sync(walletID uint) (err error) {
 	err = models.CreateMultipleTxns(walletID, insertTxns)
 	if err != nil {
 		return
+	}
+
+	if wallet.TotalSynced.IsZero() || time.Since(wallet.TotalSynced) > time.Minute*10 {
+		inc, out, err := qiwi.GetStat(wallet.Token, wallet.WalletID)
+		if err != nil {
+			return err
+		}
+		wallet.TotalMonthIncoming = inc
+		wallet.TotalMonthOutgoing = out
+		wallet.TotalSynced = time.Now()
+		err = wallet.Update(models.DB(),
+			models.WalletDBSchema.TotalMonthOutgoing,
+			models.WalletDBSchema.TotalMonthIncoming,
+			models.WalletDBSchema.TotalSynced)
+		if err != nil {
+			return err
+		}
 	}
 
 	return

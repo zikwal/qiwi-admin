@@ -15,6 +15,7 @@ import (
 	"github.com/zhuharev/qiwi-admin/routers"
 	"github.com/zhuharev/qiwi-admin/routers/auth"
 	"github.com/zhuharev/qiwi-admin/routers/groups"
+	"github.com/zhuharev/qiwi-admin/routers/transfers"
 	"github.com/zhuharev/qiwi-admin/routers/wallets"
 	macaron "gopkg.in/macaron.v1"
 )
@@ -63,15 +64,18 @@ func startWeb(ctx *cli.Context) {
 	m.Get("/logout", auth.Logout)
 
 	m.Group("/groups", func() {
-		m.Get("/:groupID", wallets.List)
+		m.Get("/:groupID", groups.Get)
 	}, auth.MustAuthorized)
 
 	m.Group("/wallets/", func() {
 		m.Post("/create", wallets.Create)
 		m.Get("/:id", wallets.Show)
+		m.Any("/:id/setting", wallets.Setting)
 	}, auth.MustAuthorized)
 
 	m.Get("/dashboard", auth.MustAuthorized, groups.List)
+
+	m.Any("/transfer", transfers.Transfer)
 
 	m.Run()
 }

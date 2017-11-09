@@ -8,6 +8,7 @@ import (
 	"fmt"
 
 	"github.com/fatih/color"
+	"github.com/jinzhu/now"
 	"github.com/zhuharev/qiwi"
 	"github.com/zhuharev/qiwi-admin/models"
 )
@@ -80,5 +81,39 @@ func GetLastTxns(token string, walletID uint64) (res []models.Txn, err error) {
 	for _, qiwiTxn := range payments.Data {
 		res = append(res, convertQiwiTxn(qiwiTxn))
 	}
+	return
+}
+
+// GetStat return stat of current month
+func GetStat(token string, walletID uint64) (incoming, outgoing float64, err error) {
+	client := qiwi.New(token, qiwi.Debug, qiwi.Wallet(fmt.Sprint(walletID)))
+	stat, err := client.History.Stat(now.BeginningOfMonth(), now.EndOfMonth())
+	if err != nil {
+		return
+	}
+	for _, a := range stat.IncomingTotal {
+		incoming += a.Amount
+	}
+	for _, a := range stat.OutgoingTotal {
+		outgoing += a.Amount
+	}
+	return
+}
+
+// Transfer transfer money
+func Transfer(token, to string, amount float64) (transactionID uint, err error) {
+	client := qiwi.New(token, qiwi.Debug)
+	id, err := client.Cards.Detect(to)
+	if err != nil {
+		return
+	}
+
+	color.Green("%v", id)
+
+	// _, err = client.Cards.Payment(id, amount, to)
+	// if err != nil {
+	// 	return
+	// }
+
 	return
 }

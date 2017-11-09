@@ -15,6 +15,8 @@ type Group struct {
 
 	Name    string
 	OwnerID uint
+
+	Counters GroupCounters `gorm:"-"`
 }
 
 // CreateGroup save new group in db
@@ -38,5 +40,25 @@ func GetUserGroups(userID uint) (res []Group, err error) {
 func GetGroup(id uint) (group *Group, err error) {
 	group = new(Group)
 	err = NewGroupQuerySet(db).IDEq(id).One(group)
+	if err != nil {
+		return
+	}
+
+	counters, err := GetGroupCounters(id)
+	group.Counters = counters
+
+	return
+}
+
+// GroupCounters response of aggregate sql request
+type GroupCounters struct {
+	Balance float64 `gorm:"balance"`
+	Count   int     `gorm:"count"`
+}
+
+// GetGroupCounters agregate stat
+func GetGroupCounters(groupID uint) (res GroupCounters, err error) {
+	sql := ` select sum(wallets.balance) as balance,count() as count from wallets where group_id = ?`
+	err = db.Raw(sql, groupID).Scan(&res).Error
 	return
 }

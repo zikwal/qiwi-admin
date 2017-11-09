@@ -26,6 +26,12 @@ func Show(ctx *context.Context) {
 		return
 	}
 
+	group, err := models.GetGroup(wallet.GroupID)
+	if ctx.HasError(err) {
+		return
+	}
+
+	ctx.Data["group"] = group
 	ctx.Data["transactions"] = txns
 	ctx.Data["wallet"] = wallet
 	ctx.Data["Title"] = fmt.Sprintf("Кошелёк %s", wallet)

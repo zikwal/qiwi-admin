@@ -26,6 +26,11 @@ type Wallet struct {
 	TokenExpiry time.Time
 
 	Balance float64
+	Limit   uint
+
+	TotalMonthIncoming float64
+	TotalMonthOutgoing float64
+	TotalSynced        time.Time
 
 	// userID
 	OwnerID uint
