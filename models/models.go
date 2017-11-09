@@ -5,6 +5,10 @@
 package models
 
 import (
+	"path/filepath"
+
+	"github.com/zhuharev/qiwi-admin/pkg/setting"
+
 	"github.com/jinzhu/gorm"
 
 	// sqlite driver
@@ -13,6 +17,8 @@ import (
 
 var (
 	db *gorm.DB
+
+	dbName = "db.sqlite"
 )
 
 // DB returns db for global usage
@@ -22,7 +28,7 @@ func DB() *gorm.DB {
 
 // NewContext init db instance
 func NewContext() (err error) {
-	db, err = gorm.Open("sqlite3", "data/db.sqlite")
+	db, err = gorm.Open("sqlite3", filepath.Join(setting.App.DataDir, dbName))
 	if err != nil {
 		return
 	}

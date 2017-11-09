@@ -6,12 +6,14 @@ package cmd
 
 import (
 	"log"
+	"path/filepath"
 
 	"github.com/go-macaron/binding"
 	"github.com/go-macaron/session"
 	"github.com/urfave/cli"
 	"github.com/zhuharev/qiwi-admin/models"
 	"github.com/zhuharev/qiwi-admin/pkg/context"
+	"github.com/zhuharev/qiwi-admin/pkg/setting"
 	"github.com/zhuharev/qiwi-admin/routers"
 	"github.com/zhuharev/qiwi-admin/routers/auth"
 	"github.com/zhuharev/qiwi-admin/routers/groups"
@@ -25,10 +27,18 @@ var (
 	CmdWeb = cli.Command{
 		Name:   "web",
 		Action: startWeb,
+		Flags: []cli.Flag{
+			cli.StringFlag{
+				Name:  "data-dir",
+				Value: "./data",
+			},
+		},
 	}
 )
 
-func newMacaron() (m *macaron.Macaron) {
+func newMacaron(ctx *cli.Context) (m *macaron.Macaron) {
+
+	setting.App.DataDir = ctx.String("data-dir")
 
 	err := routers.GlobalInit()
 	if err != nil {
@@ -46,7 +56,7 @@ func newMacaron() (m *macaron.Macaron) {
 	m.Use(session.Sessioner(session.Options{
 		CookieName:     "s",
 		Provider:       "file",
-		ProviderConfig: "data/sessions",
+		ProviderConfig: filepath.Join(setting.App.DataDir, "sessions"),
 	}))
 
 	// wrapped context
@@ -56,7 +66,7 @@ func newMacaron() (m *macaron.Macaron) {
 }
 
 func startWeb(ctx *cli.Context) {
-	m := newMacaron()
+	m := newMacaron(ctx)
 	m.Get("/", auth.RedirectAutorized, routers.Index)
 
 	m.Any("/auth", auth.RedirectAutorized, binding.Bind(models.AuthForm{}), auth.Auth)

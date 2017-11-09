@@ -1,1 +1,1 @@
-web: qiwi-admin web
+web: qiwi-admin web -data-dir=/storage
