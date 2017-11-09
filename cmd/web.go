@@ -53,8 +53,10 @@ func newMacaron(ctx *cli.Context) (m *macaron.Macaron) {
 	}))
 
 	// sessions, auth, cookies
+	sessionLifeTime := 24 * 60 * 60 * 365
 	m.Use(session.Sessioner(session.Options{
 		CookieName:     "s",
+		CookieLifeTime: sessionLifeTime,
 		Provider:       "file",
 		ProviderConfig: filepath.Join(setting.App.DataDir, "sessions"),
 	}))
