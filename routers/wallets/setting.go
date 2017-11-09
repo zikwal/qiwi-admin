@@ -16,7 +16,7 @@ func Setting(ctx *context.Context) {
 		walletID = uint(ctx.ParamsInt(":id"))
 	)
 
-	wallet, err := models.GetWallet(walletID)
+	_, err := models.GetWallet(walletID)
 	if err != nil {
 		return
 	}
