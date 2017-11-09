@@ -1,5 +1,13 @@
 <div class="uk-margin">
-  <form action="" class="uk-form">
+  <ul class="uk-breadcrumb">
+    <li><a href="/dashboard">Группы</a></li>
+    <li><a href="/groups/{{ .wallet.GroupID }}"> {{ .group.Name }} </a></li>
+    <li><a href="/wallets/{{ .wallet.ID }}"> {{ .wallet.Name }} </a></li>
+    <li><span> Настройки </span></li>
+  </ul>
+</div>
+<div class="uk-margin">
+  <form action="" class="uk-form" method="post">
     <div class="uk-margin">
       <label for="name">Имя</label>
       <input class="uk-input" type="text" name="name" id="name" placeholder="Имя кошелька" value="{{ .wallet.Name }}">
@@ -7,6 +15,10 @@
     <div class="uk-margin">
       <label for="token">Токен</label>
       <input class="uk-input" type="text" name="token" id="token" placeholder="Токен доступа" value="{{ .wallet.Token }}">
+    </div>
+    <div class="uk-margin">
+      <label for="expiry">Срок действия токена (фомат: "дд.мм.гггг")</label>
+      <input class="uk-input" type="text" name="expiry" id="expiry" placeholder="20.12.2019" value="{{ .wallet.TokenExpiry.Format "02.01.2006" }}">
     </div>
     <div class="uk-margin">
       <label for="limit">Лимит</label>

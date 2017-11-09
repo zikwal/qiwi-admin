@@ -5,6 +5,9 @@
 package wallets
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/zhuharev/qiwi-admin/models"
 	"github.com/zhuharev/qiwi-admin/pkg/context"
 )
@@ -16,10 +19,34 @@ func Setting(ctx *context.Context) {
 		walletID = uint(ctx.ParamsInt(":id"))
 	)
 
-	_, err := models.GetWallet(walletID)
-	if err != nil {
+	wallet, err := models.GetWallet(walletID)
+	if ctx.HasError(err) {
 		return
 	}
 
+	if ctx.Req.Method == "POST" {
+		wallet.Token = ctx.Query("token")
+		wallet.Name = ctx.Query("name")
+		wallet.Limit = uint(ctx.QueryInt("limit"))
+		wallet.TokenExpiry, _ = time.Parse("02.01.2006", ctx.Query("expiry"))
+		err = wallet.Update(models.DB(),
+			models.WalletDBSchema.Name,
+			models.WalletDBSchema.Token,
+			models.WalletDBSchema.TokenExpiry,
+			models.WalletDBSchema.Limit)
+		if ctx.HasError(err) {
+			return
+		}
+		ctx.Redirect(fmt.Sprintf("/wallets/%d/setting", walletID))
+		return
+	}
+
+	group, err := models.GetGroup(wallet.GroupID)
+	if ctx.HasError(err) {
+		return
+	}
+
+	ctx.Data["group"] = group
+	ctx.Data["wallet"] = wallet
 	ctx.HTML(200, "wallets/setting")
 }

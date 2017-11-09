@@ -1,1 +1,1 @@
-web: qiwi-admin
+web: qiwi-admin web
