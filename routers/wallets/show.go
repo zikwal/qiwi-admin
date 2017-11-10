@@ -16,7 +16,7 @@ func Show(ctx *context.Context) {
 	var (
 		id = uint(ctx.ParamsInt64(":id"))
 	)
-	wallet, err := models.GetWallet(id)
+	wallet, err := models.GetWallet(id, ctx.User.ID)
 	if ctx.HasError(err) {
 		return
 	}
