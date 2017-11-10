@@ -37,9 +37,13 @@ func GetUserGroups(userID uint) (res []Group, err error) {
 }
 
 // GetGroup returns group by id
-func GetGroup(id uint) (group *Group, err error) {
+func GetGroup(id uint, userIDs ...uint) (group *Group, err error) {
 	group = new(Group)
-	err = NewGroupQuerySet(db).IDEq(id).One(group)
+	query := NewGroupQuerySet(db).IDEq(id)
+	if len(userIDs) > 0 {
+		query = query.OwnerIDEq(userIDs[0])
+	}
+	err = query.One(group)
 	if err != nil {
 		return
 	}

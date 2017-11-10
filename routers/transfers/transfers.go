@@ -9,6 +9,7 @@ import (
 
 	"github.com/zhuharev/qiwi-admin/pkg/context"
 	"github.com/zhuharev/qiwi-admin/pkg/qiwi"
+	"github.com/zhuharev/qiwi-admin/pkg/syncronizer"
 )
 
 // Transfer transfer money
@@ -16,19 +17,38 @@ func Transfer(ctx *context.Context) {
 
 	var (
 		//from = ctx.Query("from")
-		to       = ctx.Query("to")
-		amount   = ctx.QueryFloat64("amount")
-		walletID = uint(ctx.QueryInt("wallet_id"))
+		to          = ctx.Query("to")
+		amount      = ctx.QueryFloat64("amount")
+		walletID    = uint(ctx.QueryInt("wallet_id"))
+		needShowFee = ctx.QueryBool("show_fee")
 	)
 
+	ctx.Data["to"] = to
+	ctx.Data["amount"] = amount
+
 	if ctx.Req.Method == "POST" {
-		wallet, err := models.GetWallet(walletID)
+		wallet, err := models.GetWallet(walletID, ctx.User.ID)
 		if ctx.HasError(err) {
 			return
 		}
 
-		_, err = qiwi.Transfer(wallet.Token, to, amount)
-		if ctx.HasError(err) {
+		if needShowFee {
+			ctx.Data["wallet"] = wallet
+
+			ctx.Data["fee"], err = qiwi.DetectFee(wallet.Token, to, amount)
+			if ctx.HasError(err) {
+				return
+			}
+		} else {
+			_, err = qiwi.Transfer(wallet.Token, to, amount)
+			if ctx.HasError(err) {
+				return
+			}
+			err = syncronizer.Sync(wallet.ID)
+			if ctx.HasError(err) {
+				return
+			}
+			ctx.Redirect("/dashboard")
 			return
 		}
 	}

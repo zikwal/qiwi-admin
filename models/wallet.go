@@ -66,7 +66,7 @@ func GetWallet(walletID uint, userIDs ...uint) (wallet *Wallet, err error) {
 	wallet = new(Wallet)
 	query := NewWalletQuerySet(db).IDEq(walletID)
 	if len(userIDs) > 0 {
-		query.OwnerIDEq(userIDs[0])
+		query = query.OwnerIDEq(userIDs[0])
 	}
 	err = query.One(wallet)
 	if err != nil {

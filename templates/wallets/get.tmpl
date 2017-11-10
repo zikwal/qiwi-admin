@@ -41,12 +41,17 @@
     </table>
     <h4>Перевести</h4>
     <form action="/transfer" method="post" class="uk-form">
+      <input type="hidden" name="wallet_id" value="{{ .wallet.ID }}" id="">
       <div class="uk-margin">
         <label for="to"></label>
         <input type="text" placeholder="Кошелёк или карта" class="uk-input" name="to" id="to">
       </div>
       <div class="uk-margin">
         <input type="text" class="uk-input" name="amount" id="" placeholder="Сумма">
+      </div>
+      <div class="uk-margin">
+        <label for="show_fee">Показать точную комиссию перед платежом</label>
+        <input checked type="checkbox" class="uk-checkbox" name="show_fee" id="show_fee" value="true">
       </div>
       <div class="uk-margin">
         <button class="uk-button uk-button-primary">Перевести</button>

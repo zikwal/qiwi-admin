@@ -15,6 +15,7 @@ import (
 	"github.com/zhuharev/qiwi-admin/pkg/context"
 	"github.com/zhuharev/qiwi-admin/pkg/setting"
 	"github.com/zhuharev/qiwi-admin/routers"
+	"github.com/zhuharev/qiwi-admin/routers/accounts"
 	"github.com/zhuharev/qiwi-admin/routers/auth"
 	"github.com/zhuharev/qiwi-admin/routers/groups"
 	"github.com/zhuharev/qiwi-admin/routers/transfers"
@@ -88,6 +89,12 @@ func startWeb(ctx *cli.Context) {
 	m.Get("/dashboard", auth.MustAuthorized, groups.List)
 
 	m.Any("/transfer", transfers.Transfer)
+
+	m.Get("/setting", accounts.Setting)
+
+	m.Group("/users", func() {
+		m.Post("/create", binding.Bind(models.AuthForm{}), accounts.Create)
+	})
 
 	m.Run()
 }

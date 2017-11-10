@@ -52,11 +52,8 @@ func CreateMultipleTxns(walletID uint, txns []Txn) (err error) {
 	tx := db.Begin()
 	for _, txn := range txns {
 		txn.WalletID = walletID
-		err = tx.Create(txn).Error
-		if err != nil {
-			tx.Rollback()
-			return
-		}
+		// ignore this errors
+		_ = tx.Create(txn).Error
 	}
 	err = tx.Commit().Error
 	return

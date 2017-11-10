@@ -74,7 +74,7 @@ func convertQiwiTxn(qiwiTxn qiwi.Txn) (txn models.Txn) {
 // GetLastTxns call qiwi api and returns last 50 txns
 func GetLastTxns(token string, walletID uint64) (res []models.Txn, err error) {
 	client := qiwi.New(token, qiwi.Debug, qiwi.Wallet(fmt.Sprint(walletID)))
-	payments, err := client.History.Payments(50)
+	payments, err := client.Payments.History(50)
 	if err != nil {
 		return
 	}
@@ -87,7 +87,7 @@ func GetLastTxns(token string, walletID uint64) (res []models.Txn, err error) {
 // GetStat return stat of current month
 func GetStat(token string, walletID uint64) (incoming, outgoing float64, err error) {
 	client := qiwi.New(token, qiwi.Debug, qiwi.Wallet(fmt.Sprint(walletID)))
-	stat, err := client.History.Stat(now.BeginningOfMonth(), now.EndOfMonth())
+	stat, err := client.Payments.Stat(now.BeginningOfMonth(), now.EndOfMonth())
 	if err != nil {
 		return
 	}
@@ -96,6 +96,15 @@ func GetStat(token string, walletID uint64) (incoming, outgoing float64, err err
 	}
 	for _, a := range stat.OutgoingTotal {
 		outgoing += a.Amount
+	}
+	return
+}
+
+func DetectProvider(token string, to string) (id int, err error) {
+	client := qiwi.New(token, qiwi.Debug)
+	id, err = client.Cards.Detect(to)
+	if err != nil {
+		return
 	}
 	return
 }
@@ -110,10 +119,30 @@ func Transfer(token, to string, amount float64) (transactionID uint, err error) 
 
 	color.Green("%v", id)
 
-	// _, err = client.Cards.Payment(id, amount, to)
-	// if err != nil {
-	// 	return
-	// }
+	_, err = client.Cards.Payment(id, amount, to)
+	if err != nil {
+		return
+	}
 
 	return
+}
+
+// TransferFromGroup transfer from group wallets to target
+func TransferFromGroup(groupID, userID uint, to string) (errs []error) {
+	return
+}
+
+// Fee returns fee of payment
+func Fee(token string, providerID int, to string, amount float64) (fee float64, err error) {
+	client := qiwi.New(token, qiwi.Debug)
+	feeResp, err := client.Payments.SpecialComission(providerID, to, amount)
+	return feeResp.QwCommission.Amount, err
+}
+
+func DetectFee(token string, to string, amount float64) (fee float64, err error) {
+	providerID, err := DetectProvider(token, to)
+	if err != nil {
+		return
+	}
+	return Fee(token, providerID, to, amount)
 }

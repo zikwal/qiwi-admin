@@ -3,11 +3,20 @@
     <input type="hidden" name="wallet_id" value="{{ .walletID }}" id="">
     <div class="uk-margin">
       <label for="to"></label>
-      <input type="text" placeholder="Кошелёк или карта" class="uk-input" name="to" id="to">
+      <input type="text" placeholder="Кошелёк или карта" class="uk-input" name="to" id="to" value="{{ .to }}">
     </div>
     <div class="uk-margin">
-      <input type="text" class="uk-input" name="amount" id="" placeholder="Сумма">
+      <input type="text" class="uk-input" name="amount" id="" placeholder="Сумма" value="{{ .amount }}">
     </div>
+    {{ with .fee }}
+    <div class="uk-margin">
+      <div class="uk-text-muted">
+        Комиссия: {{ . }}руб.
+      </div>
+    </div>
+    {{ else }}
+
+    {{ end }}
     <div class="uk-margin">
       <button class="uk-button uk-button-primary">Перевести</button>
     </div>

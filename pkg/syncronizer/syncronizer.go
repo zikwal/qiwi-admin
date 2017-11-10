@@ -36,6 +36,21 @@ func Sync(walletID uint) (err error) {
 		return
 	}
 
+	_, blocked, balance, err := qiwi.CheckToken(wallet.Token)
+	if err != nil {
+		return
+	}
+
+	// todo notify change
+	wallet.Blocked = blocked
+	wallet.Balance = balance
+	err = wallet.Update(models.DB(),
+		models.WalletDBSchema.Blocked,
+		models.WalletDBSchema.Balance)
+	if err != nil {
+		return
+	}
+
 	lastTxnID, _ := models.GetLastTxn(wallet.ID)
 
 	txns, err := qiwi.GetLastTxns(wallet.Token, wallet.WalletID)

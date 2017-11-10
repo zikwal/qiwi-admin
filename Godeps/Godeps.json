@@ -65,7 +65,8 @@
 		},
 		{
 			"ImportPath": "github.com/zhuharev/qiwi",
-			"Rev": "c6453eb1e7c3e38268be9d5e3aa29e0fb0bf7532"
+			"Comment": "v0.0.2",
+			"Rev": "8b7747691537682b44b615efd913795a45cd6fe3"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/bcrypt",

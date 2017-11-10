@@ -35,7 +35,7 @@
     <h4>Информация</h4>
     <table class="uk-table">
       <tr>
-        <td>Баланс:</td>
+        <td>Баланс группы:</td>
         <td>{{ .group.Counters.Balance }}</td>
       </tr>
       <tr>
@@ -43,14 +43,15 @@
         <td>{{ .group.Counters.Count }}</td>
       </tr>
     </table>
-    <h4>Перевести</h4>
+    <h4>Перевести всё на карту</h4>
     <form action="/transfer" method="post" class="uk-form">
       <div class="uk-margin">
         <label for="to"></label>
-        <input type="text" placeholder="Кошелёк или карта" class="uk-input" name="to" id="to">
+        <input type="text" placeholder="Номер карты" class="uk-input" name="to" id="to">
       </div>
       <div class="uk-margin">
-        <input type="text" class="uk-input" name="amount" id="" placeholder="Сумма">
+        <label for="show_fee">Показать точную комиссию перед платежом</label>
+        <input checked type="checkbox" class="uk-checkbox" name="show_fee" id="show_fee" value="true">
       </div>
       <div class="uk-margin">
         <button class="uk-button uk-button-primary">Перевести</button>

@@ -31,7 +31,7 @@ func Get(ctx *context.Context) {
 		return
 	}
 
-	group, err := models.GetGroup(groupID)
+	group, err := models.GetGroup(groupID, ctx.User.ID)
 	if ctx.HasError(err) {
 		return
 	}

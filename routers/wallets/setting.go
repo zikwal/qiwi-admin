@@ -19,7 +19,7 @@ func Setting(ctx *context.Context) {
 		walletID = uint(ctx.ParamsInt(":id"))
 	)
 
-	wallet, err := models.GetWallet(walletID)
+	wallet, err := models.GetWallet(walletID, ctx.User.ID)
 	if ctx.HasError(err) {
 		return
 	}
@@ -41,7 +41,7 @@ func Setting(ctx *context.Context) {
 		return
 	}
 
-	group, err := models.GetGroup(wallet.GroupID)
+	group, err := models.GetGroup(wallet.GroupID, ctx.User.ID)
 	if ctx.HasError(err) {
 		return
 	}

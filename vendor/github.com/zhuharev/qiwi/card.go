@@ -5,11 +5,8 @@
 package qiwi
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"log"
 	"net/url"
 	"strconv"
 	"time"
@@ -35,26 +32,9 @@ type CardsDetectResponse struct {
 }
 
 // Detect detect card PS
-func (c *Cards) Detect(cardNumber string) (id int64, err error) {
-	body, err := c.client.makePostRequest(EndpointCardsDetect, url.Values{"cardNumber": {cardNumber}})
-	if err != nil {
-		return
-	}
-	defer body.Close()
-
-	bts, err := ioutil.ReadAll(body)
-	if err != nil {
-		return
-	}
-
-	buf := bytes.NewReader(bts)
-
-	log.Printf("%s", bts)
-
-	dec := json.NewDecoder(buf)
-
+func (c *Cards) Detect(cardNumber string) (id int, err error) {
 	var r CardsDetectResponse
-	err = dec.Decode(&r)
+	err = c.client.makePostRequest(EndpointCardsDetect, &r, url.Values{"cardNumber": {cardNumber}})
 	if err != nil {
 		return
 	}
@@ -63,7 +43,11 @@ func (c *Cards) Detect(cardNumber string) (id int64, err error) {
 		return 0, fmt.Errorf("%s", r.Message.String())
 	}
 
-	return r.Message.Int64()
+	idInt64, err := r.Message.Int64()
+	if err != nil {
+		return
+	}
+	return int(idInt64), nil
 }
 
 // PaymentRequest request of payment
@@ -103,35 +87,24 @@ type PaymentResponse struct {
 }
 
 // Payment make mayment
-func (c *Cards) Payment(psID int64, amount float64, cardNumber string) (res PaymentResponse, err error) {
+func (c *Cards) Payment(psID int, amount float64, cardNumber string) (res PaymentResponse, err error) {
 	req := PaymentRequest{
 		ID: strconv.Itoa(int(time.Now().Unix()) * 1000),
 	}
 	// constants
 	req.PaymentMethod.Type = "Account"
-	req.PaymentMethod.AccountID = "643"
+	req.PaymentMethod.AccountID = CurrencyRUB
 
 	req.Sum.Amount = amount
-	req.Sum.Currency = "643"
+	req.Sum.Currency = CurrencyRUB
 	req.Fields.Account = cardNumber
 
 	endpoint := fmt.Sprintf(EndpointCardsPayment, psID)
 
-	body, err := c.client.makePostRequest(endpoint, req)
+	err = c.client.makePostRequest(endpoint, &res, req)
 	if err != nil {
 		return
 	}
-	defer body.Close()
-
-	bts, err := ioutil.ReadAll(body)
-	if err != nil {
-		return
-	}
-
-	log.Printf("%s\n", bts)
-
-	dec := json.NewDecoder(bytes.NewReader(bts))
-	err = dec.Decode(&res)
 
 	return
 }
