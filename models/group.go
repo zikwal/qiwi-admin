@@ -58,7 +58,7 @@ type GroupCounters struct {
 
 // GetGroupCounters agregate stat
 func GetGroupCounters(groupID uint) (res GroupCounters, err error) {
-	sql := ` select sum(wallets.balance) as balance,count() as count from wallets where group_id = ?`
+	sql := `select sum(wallets.balance) as balance,count() as count from wallets where group_id = ?`
 	err = db.Raw(sql, groupID).Scan(&res).Error
 	return
 }

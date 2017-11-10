@@ -8,9 +8,11 @@ package models
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/jinzhu/now"
 )
 
 // Wallet qiwi wallet credentials and setting
@@ -36,6 +38,8 @@ type Wallet struct {
 	OwnerID uint
 
 	GroupID uint
+
+	WalletCounters WalletCounters `gorm:"-"`
 }
 
 func (w Wallet) String() string {
@@ -58,9 +62,20 @@ func GetAllWallets() (res []Wallet, err error) {
 }
 
 // GetWallet returns wallet by their ID
-func GetWallet(walletID uint) (wallet *Wallet, err error) {
+func GetWallet(walletID uint, userIDs ...uint) (wallet *Wallet, err error) {
 	wallet = new(Wallet)
-	err = NewWalletQuerySet(db).IDEq(walletID).One(wallet)
+	query := NewWalletQuerySet(db).IDEq(walletID)
+	if len(userIDs) > 0 {
+		query.OwnerIDEq(userIDs[0])
+	}
+	err = query.One(wallet)
+	if err != nil {
+		return
+	}
+
+	counters, err := GetWalletCounters(walletID)
+	wallet.WalletCounters = counters
+
 	return
 }
 
@@ -71,5 +86,19 @@ func CreateWallet(wallet *Wallet) (err error) {
 		return
 	}
 
+	return
+}
+
+// WalletCounters special counters (stat) for wallet
+type WalletCounters struct {
+	TodayTxnCount int     `gorm:"column:count"`
+	TodayTxnSum   float64 `gorm:"column:sum"`
+}
+
+// GetWalletCounters returns wallet stat
+func GetWalletCounters(walletID uint) (wc WalletCounters, err error) {
+	sql := `select sum(txns.amount) as sum, count() as count from txns where wallet_id = ? and datetime(created_at) >= datetime(?) and txn_type = ?`
+	err = db.Raw(sql, walletID, now.BeginningOfDay(), In).Scan(&wc).Error
+	log.Println(wc)
 	return
 }

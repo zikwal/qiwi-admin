@@ -34,6 +34,10 @@
         <td>Снятий:</td>
         <td>{{ .wallet.TotalMonthOutgoing }}</td>
       </tr>
+      <tr>
+        <td>Транзакций сегодня:</td>
+        <td>{{ .wallet.WalletCounters.TodayTxnCount }}</td>
+      </tr>
     </table>
     <h4>Перевести</h4>
     <form action="/transfer" method="post" class="uk-form">
