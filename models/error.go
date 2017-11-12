@@ -6,6 +6,7 @@ package models
 
 import "strings"
 
+// IsErrUnniqueConstraintFailed check is sql error unique constrint failed
 func IsErrUnniqueConstraintFailed(err error) bool {
 	if err == nil {
 		return false
