@@ -23,7 +23,7 @@ const (
 // Txn qiwi transaction
 // gen:qs
 type Txn struct {
-	ID uint `gorm:"unique_index"`
+	ID uint `gorm:"index"`
 
 	TxnType    TxnType
 	ProviderID uint // ?
