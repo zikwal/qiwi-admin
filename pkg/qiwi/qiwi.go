@@ -6,6 +6,7 @@ package qiwi
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/fatih/color"
 	"github.com/jinzhu/now"
@@ -112,14 +113,20 @@ func DetectProvider(token string, to string) (id int, err error) {
 // Transfer transfer money
 func Transfer(token, to string, amount float64) (transactionID uint, err error) {
 	client := qiwi.New(token, qiwi.Debug)
-	id, err := client.Cards.Detect(to)
-	if err != nil {
-		return
+
+	var (
+		// qiwi to qiwi
+		providerID = 99
+	)
+
+	if !strings.HasPrefix(to, "+") {
+		providerID, err = client.Cards.Detect(to)
+		if err != nil {
+			return
+		}
 	}
 
-	color.Green("%v", id)
-
-	_, err = client.Cards.Payment(id, amount, to)
+	_, err = client.Cards.Payment(providerID, amount, to)
 	if err != nil {
 		return
 	}

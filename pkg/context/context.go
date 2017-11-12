@@ -62,7 +62,12 @@ func (ctx *Context) HTML(code int, tmplName string, other ...interface{}) {
 func (ctx *Context) HasError(err error) bool {
 	if err != nil {
 		ctx.Flash.Error(err.Error())
-		ctx.Redirect("/")
+		if ctx.User != nil {
+			ctx.Redirect("/dasboard")
+		} else {
+			ctx.Redirect("/")
+		}
+
 		//ctx.Error(200, err.Error())
 		return true
 	}

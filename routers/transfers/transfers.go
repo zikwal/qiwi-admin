@@ -5,6 +5,8 @@
 package transfers
 
 import (
+	"strings"
+
 	"github.com/zhuharev/qiwi-admin/models"
 
 	"github.com/zhuharev/qiwi-admin/pkg/context"
@@ -35,7 +37,11 @@ func Transfer(ctx *context.Context) {
 		if needShowFee {
 			ctx.Data["wallet"] = wallet
 
-			ctx.Data["fee"], err = qiwi.DetectFee(wallet.Token, to, amount)
+			if strings.HasPrefix(to, "+") {
+				ctx.Data["fee"] = 0
+			} else {
+				ctx.Data["fee"], err = qiwi.DetectFee(wallet.Token, to, amount)
+			}
 			if ctx.HasError(err) {
 				return
 			}
