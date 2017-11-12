@@ -78,6 +78,7 @@ func startWeb(ctx *cli.Context) {
 
 	m.Group("/groups", func() {
 		m.Get("/:groupID", groups.Get)
+		m.Post("/create", groups.Create)
 	}, auth.MustAuthorized)
 
 	m.Group("/wallets/", func() {

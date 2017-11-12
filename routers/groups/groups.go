@@ -5,6 +5,8 @@
 package groups
 
 import (
+	"fmt"
+
 	"github.com/zhuharev/qiwi-admin/models"
 	"github.com/zhuharev/qiwi-admin/pkg/context"
 )
@@ -40,4 +42,15 @@ func Get(ctx *context.Context) {
 	ctx.Data["wallets"] = wallets
 	ctx.Data["Title"] = "Мои кошельки"
 	ctx.HTML(200, "groups/get")
+}
+
+// Create create an group
+func Create(ctx *context.Context) {
+	g, err := models.CreateGroup(ctx.Query("name"), ctx.User.ID)
+	if ctx.HasError(err) {
+		return
+	}
+
+	ctx.Flash.Success("Группа создана")
+	ctx.Redirect("/groups/" + fmt.Sprint(g.ID))
 }

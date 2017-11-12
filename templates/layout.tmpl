@@ -32,6 +32,12 @@
         {{ . }}
         </div>
       </div>{{ end }}
+      {{ with .Flash.SuccessMsg }}
+      <div class="container">
+        <div class="uk-alert uk-alert-success">
+          {{ . }}
+          </div>
+        </div>{{ end }}
   {{ yield }}
     </div>
   <!-- <script src="/js/bundle.js"></script> -->
