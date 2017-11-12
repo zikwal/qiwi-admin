@@ -7,6 +7,8 @@
 package models
 
 import (
+	"fmt"
+
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -37,6 +39,9 @@ func CreateUser(af AuthForm) (user *User, err error) {
 
 	err = SaveUser(user)
 	if err != nil {
+		if IsErrUnniqueConstraintFailed(err) {
+			err = fmt.Errorf("Пользователь с таким именем уже существует")
+		}
 		return
 	}
 

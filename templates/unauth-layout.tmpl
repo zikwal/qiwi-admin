@@ -21,7 +21,12 @@
               </li>
           </ul>
       </div>
-    </nav>
+    </nav>{{ with .Flash.ErrorMsg }}
+    <div class="container">
+      <div class="uk-alert uk-alert-danger">
+        {{ . }}
+        </div>
+      </div>{{ end }}
     {{ yield }}
 </body>
 </html>

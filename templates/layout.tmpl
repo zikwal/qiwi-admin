@@ -26,7 +26,12 @@
           </ul>
       </div>
     </nav>
-
+    {{ with .Flash.ErrorMsg }}
+    <div class="container">
+      <div class="uk-alert uk-alert-danger">
+        {{ . }}
+        </div>
+      </div>{{ end }}
   {{ yield }}
     </div>
   <!-- <script src="/js/bundle.js"></script> -->

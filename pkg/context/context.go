@@ -61,7 +61,9 @@ func (ctx *Context) HTML(code int, tmplName string, other ...interface{}) {
 // HasError check passed err and write resposne if err!=nil
 func (ctx *Context) HasError(err error) bool {
 	if err != nil {
-		ctx.Error(200, err.Error())
+		ctx.Flash.Error(err.Error())
+		ctx.Redirect("/")
+		//ctx.Error(200, err.Error())
 		return true
 	}
 	return false
