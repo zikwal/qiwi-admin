@@ -101,6 +101,7 @@ func GetStat(token string, walletID uint64) (incoming, outgoing float64, err err
 	return
 }
 
+// DetectProvider detect provider
 func DetectProvider(token string, to string) (id int, err error) {
 	client := qiwi.New(token, qiwi.Debug)
 	id, err = client.Cards.Detect(to)
@@ -111,7 +112,7 @@ func DetectProvider(token string, to string) (id int, err error) {
 }
 
 // Transfer transfer money
-func Transfer(token, to string, amount float64) (transactionID uint, err error) {
+func Transfer(token, to string, amount float64, comments ...string) (transactionID uint, err error) {
 	client := qiwi.New(token, qiwi.Debug)
 
 	var (
@@ -126,16 +127,81 @@ func Transfer(token, to string, amount float64) (transactionID uint, err error) 
 		}
 	}
 
-	_, err = client.Cards.Payment(providerID, amount, to)
+	return TransferWithProvider(providerID, token, to, amount, comments...)
+}
+
+func TransferWithProvider(providerID int, token, to string, amount float64, comments ...string) (transactionID uint, err error) {
+	client := qiwi.New(token, qiwi.Debug)
+	_, err = client.Cards.Payment(providerID, amount, to, comments...)
 	if err != nil {
 		return
 	}
+	return
+}
 
+func calculateTransferAmount(balance float64, restAmount float64, comission qiwi.ComissionResponse) (amount float64) {
+	for _, com := range comission.Content.Terms.Commission.Ranges {
+		if com.Fixed != 0 {
+			amount -= com.Fixed
+		}
+		if com.Rate != 0 {
+			amount /= 1.0 + com.Rate
+		}
+	}
 	return
 }
 
 // TransferFromGroup transfer from group wallets to target
-func TransferFromGroup(groupID, userID uint, to string) (errs []error) {
+func TransferFromGroup(groupID, userID uint, to string, restAmount float64) (errs []error) {
+	wallets, err := models.GroupWallets(groupID)
+	if err != nil {
+		errs = []error{err}
+		return
+	}
+
+	var (
+		providerID        = 0
+		comissionResponse qiwi.ComissionResponse
+	)
+
+	for _, wallet := range wallets {
+		walletID, blocked, balance, err := CheckToken(wallet.Token)
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+		if blocked {
+			errs = append(errs, fmt.Errorf("Кошелёк %d заблокирован", walletID))
+			continue
+		}
+		if balance < restAmount {
+			errs = append(errs, fmt.Errorf("На кошельке %d не хватает средств для вывода", walletID))
+			continue
+		}
+		client := qiwi.New(wallet.Token, qiwi.Debug)
+		if providerID == 0 {
+			providerID, err = client.Cards.Detect(to)
+			if err != nil {
+				errs = append(errs, err)
+				continue
+			}
+		}
+		if len(comissionResponse.Content.Terms.Commission.Ranges) == 0 {
+			comissionResponse, err = client.Payments.Comission(providerID)
+			if err != nil {
+				errs = append(errs, err)
+				continue
+			}
+		}
+
+		amount := calculateTransferAmount(balance, restAmount, comissionResponse)
+		_, err = TransferWithProvider(providerID, wallet.Token, to, amount)
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+	}
+
 	return
 }
 
@@ -146,6 +212,7 @@ func Fee(token string, providerID int, to string, amount float64) (fee float64, 
 	return feeResp.QwCommission.Amount, err
 }
 
+// DetectFee detet provider and after fee
 func DetectFee(token string, to string, amount float64) (fee float64, err error) {
 	providerID, err := DetectProvider(token, to)
 	if err != nil {

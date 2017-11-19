@@ -90,6 +90,7 @@ func startWeb(ctx *cli.Context) {
 	m.Get("/dashboard", auth.MustAuthorized, groups.List)
 
 	m.Any("/transfer", transfers.Transfer)
+	m.Post("/transfer/groups/:groupID", transfers.TransferFromGroup)
 
 	m.Get("/setting", accounts.Setting)
 
