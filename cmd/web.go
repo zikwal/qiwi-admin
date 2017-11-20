@@ -16,6 +16,7 @@ import (
 	"github.com/zhuharev/qiwi-admin/pkg/setting"
 	"github.com/zhuharev/qiwi-admin/routers"
 	"github.com/zhuharev/qiwi-admin/routers/accounts"
+	"github.com/zhuharev/qiwi-admin/routers/apps"
 	"github.com/zhuharev/qiwi-admin/routers/auth"
 	"github.com/zhuharev/qiwi-admin/routers/groups"
 	"github.com/zhuharev/qiwi-admin/routers/transfers"
@@ -88,6 +89,11 @@ func startWeb(ctx *cli.Context) {
 	}, auth.MustAuthorized)
 
 	m.Get("/dashboard", auth.MustAuthorized, groups.List)
+	m.Group("/dashboard", func() {
+		m.Get("/apps", apps.Apps)
+		m.Post("/apps/:appID/webhook", apps.SaveWebHookURL)
+		m.Post("/apps/create", apps.Create)
+	}, auth.MustAuthorized)
 
 	m.Any("/transfer", transfers.Transfer)
 	m.Post("/transfer/groups/:groupID", transfers.TransferFromGroup)

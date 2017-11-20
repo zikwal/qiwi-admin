@@ -63,7 +63,7 @@ func (ctx *Context) HasError(err error) bool {
 	if err != nil {
 		ctx.Flash.Error(err.Error())
 		if ctx.User != nil {
-			ctx.Redirect("/dasboard")
+			ctx.Redirect("/dashboard")
 		} else {
 			ctx.Redirect("/")
 		}

@@ -1,0 +1,24 @@
+<h1>Приложения</h1>
+
+<h3>Создать</h3>
+<form method="post" action="/dashboard/apps/create">
+  <div class="uk-margin">
+    <input type="text" class="uk-input" name="name" id="" placeholder="Название">
+  </div>
+  <button class="uk-button uk-button-primary">Создать</button>
+</form>
+
+{{ range .apps }}
+<h2>{{ .Name }}</h2>
+<form action="/dashboard/apps/{{ .ID }}/webhook" method="post">
+  <div class="uk-margin">
+    <label for="token">Токен</label>
+    <input class="uk-input" type="text" disabled name="token" value="{{ .Token }}" id="token">
+  </div>
+  <div class="uk-margin">
+    <label for="webhook">Вебхук</label>
+    <input class="uk-input" type="text" name="webhook_url" value="{{ .WebHookURL }}" id="webhook">
+  </div>
+  <button class="uk-button uk-button-primary">Сохранить</button>
+</form>
+{{ end }}

@@ -5,6 +5,8 @@
 package setting
 
 var (
+	// AppVer current app version
+	AppVer string
 	// App main config
 	App struct {
 		DataDir string

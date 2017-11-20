@@ -7,6 +7,7 @@ package routers
 import (
 	"github.com/zhuharev/qiwi-admin/models"
 	"github.com/zhuharev/qiwi-admin/pkg/context"
+	"github.com/zhuharev/qiwi-admin/pkg/notifier"
 	"github.com/zhuharev/qiwi-admin/pkg/syncronizer"
 )
 
@@ -22,6 +23,10 @@ func GlobalInit() (err error) {
 		return
 	}
 	err = syncronizer.NewContext()
+	if err != nil {
+		return
+	}
+	err = notifier.NewContext()
 	if err != nil {
 		return
 	}

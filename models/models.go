@@ -34,6 +34,10 @@ func NewContext() (err error) {
 	}
 	db.LogMode(true)
 
-	err = db.AutoMigrate(&User{}, &Txn{}, &Wallet{}, &Group{}).Error
+	err = db.AutoMigrate(&User{},
+		&Txn{},
+		&Wallet{},
+		&Group{},
+		&App{}).Error
 	return
 }

@@ -6,11 +6,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.0.4] - 2017-11-21
+### Добавлено
+- Приложения (нет в меню, `/dashboard/apps`) - можно добавлять приложения и вебхуки. При любой новой транзакции будет отправлен POST-запрос на указанный URL.
+
 ## [0.0.2] - 2017-11-19
-### Added
+### Добавлено
 - TransferFromGroup - переводит деньги из всех кошельков группы на карту
 
 ## [0.0.1] - 2017-11-09
-### Added
+### Добавлено
 - Changelog, License, Procfile
 - Add wallet groups

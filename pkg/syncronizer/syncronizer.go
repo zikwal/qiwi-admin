@@ -9,6 +9,7 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/zhuharev/qiwi-admin/models"
+	"github.com/zhuharev/qiwi-admin/pkg/notifier"
 	"github.com/zhuharev/qiwi-admin/pkg/qiwi"
 )
 
@@ -65,6 +66,12 @@ func Sync(walletID uint) (err error) {
 	for _, txn := range txns {
 		if txn.ID > lastTxnID {
 			insertTxns = append(insertTxns, txn)
+
+			// make webhook
+			err = notifier.NotifyTxn(txn)
+			if err != nil {
+				color.Red("Error when making webhook: %s", err)
+			}
 		}
 	}
 
