@@ -24,7 +24,7 @@ type Wallet struct {
 	// Phone number
 	WalletID    uint64
 	Blocked     bool
-	Token       string `gorm:"unique_index"`
+	Token       string `gorm:"index"`
 	TokenExpiry time.Time
 
 	Balance float64

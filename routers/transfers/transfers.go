@@ -23,10 +23,12 @@ func Transfer(ctx *context.Context) {
 		amount      = ctx.QueryFloat64("amount")
 		walletID    = uint(ctx.QueryInt("wallet_id"))
 		needShowFee = ctx.QueryBool("show_fee")
+		comment     = ctx.Query("comment")
 	)
 
 	ctx.Data["to"] = to
 	ctx.Data["amount"] = amount
+	ctx.Data["comment"] = comment
 
 	if ctx.Req.Method == "POST" {
 		wallet, err := models.GetWallet(walletID, ctx.User.ID)
@@ -46,7 +48,7 @@ func Transfer(ctx *context.Context) {
 				return
 			}
 		} else {
-			_, err = qiwi.Transfer(wallet.Token, to, amount)
+			_, err = qiwi.Transfer(wallet.Token, to, amount, comment)
 			if ctx.HasError(err) {
 				return
 			}

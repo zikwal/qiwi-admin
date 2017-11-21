@@ -13,6 +13,10 @@ import (
 	"github.com/zhuharev/qiwi-admin/pkg/qiwi"
 )
 
+var (
+	checkInterval = 2 * time.Minute
+)
+
 // NewContext init synchronizer adn run it in background
 func NewContext() (err error) {
 	go func() {
@@ -24,7 +28,7 @@ func NewContext() (err error) {
 					color.Red("%s", err)
 				}
 			}
-			time.Sleep(5 * time.Minute)
+			time.Sleep(checkInterval)
 		}
 	}()
 	return
@@ -52,7 +56,7 @@ func Sync(walletID uint) (err error) {
 		return
 	}
 
-	lastTxnID, _ := models.GetLastTxn(wallet.ID)
+	lastTxnID, _ := models.GetLastQiwiTxn(wallet.ID)
 
 	txns, err := qiwi.GetLastTxns(wallet.Token, wallet.WalletID)
 	if err != nil {
@@ -64,11 +68,11 @@ func Sync(walletID uint) (err error) {
 	)
 
 	for _, txn := range txns {
-		if txn.ID > lastTxnID {
+		if txn.QiwiTxnID > lastTxnID {
 			insertTxns = append(insertTxns, txn)
 
 			// make webhook
-			err = notifier.NotifyTxn(txn)
+			err = notifier.NotifyTxn(wallet, txn)
 			if err != nil {
 				color.Red("Error when making webhook: %s", err)
 			}

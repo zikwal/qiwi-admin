@@ -8,6 +8,11 @@
     <div class="uk-margin">
       <input type="text" class="uk-input" name="amount" id="" placeholder="Сумма" value="{{ .amount }}">
     </div>
+    {{ with .comment}}
+    <div class="uk-margin">
+      <input type="text" class="uk-input" name="comment" id="" placeholder="Комментарий" value="{{ .comment }}">
+    </div>
+    {{ end }}
     {{ with .fee }}
     <div class="uk-margin">
       <div class="uk-text-muted">

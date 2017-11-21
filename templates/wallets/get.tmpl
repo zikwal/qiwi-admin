@@ -50,8 +50,11 @@
         <input type="text" class="uk-input" name="amount" id="" placeholder="Сумма">
       </div>
       <div class="uk-margin">
+        <input type="text" class="uk-input" name="comment" id="" placeholder="Комментарий (только при переводе на qiwi)">
+      </div>
+      <div class="uk-margin">
         <label for="show_fee">Показать точную комиссию перед платежом</label>
-        <input checked type="checkbox" class="uk-checkbox" name="show_fee" id="show_fee" value="true">
+        <input type="checkbox" class="uk-checkbox" name="show_fee" id="show_fee" value="true">
       </div>
       <div class="uk-margin">
         <button class="uk-button uk-button-primary">Перевести</button>
@@ -70,9 +73,9 @@
         </thead>
         <tbody>
             {{ range .transactions}}<tr>
-                <td>{{ .ID }} {{  .Status }}</td>
+                <td>{{ .QiwiTxnID }} {{  .Status }}</td>
                 <td class="uk-text-{{ if eq .TxnType 1 }}success{{else}}danger{{end}}">{{ if eq .TxnType 1 }}+{{else}}-{{end}}{{ .Amount }}</td>
-                <td>{{ .CreatedAt.Format "02.01.2006 15:04"}}</td>
+                <td>{{ .QiwiCreatedAt.Format "02.01.2006 15:04"}}</td>
             </tr>{{ end }}
         </tbody>
     </table>

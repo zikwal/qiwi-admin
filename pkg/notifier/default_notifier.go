@@ -2,6 +2,7 @@ package notifier
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/go-resty/resty"
@@ -19,6 +20,7 @@ func (n *notifier) Start() (err error) {
 }
 
 func (n *notifier) Notify(cmd *NotifyCmd) {
+	log.Printf("Send webhook  to %s\n", cmd.URL)
 	n.cmdChan <- cmd
 }
 

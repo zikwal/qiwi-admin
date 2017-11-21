@@ -6,7 +6,11 @@
 
 package models
 
-import "time"
+import (
+	"time"
+
+	"github.com/jinzhu/gorm"
+)
 
 // TxnType of txn
 type TxnType uint
@@ -23,16 +27,20 @@ const (
 // Txn qiwi transaction
 // gen:qs
 type Txn struct {
-	ID uint `gorm:"index"`
+	gorm.Model
 
-	TxnType    TxnType
-	ProviderID uint // ?
-	Amount     float64
-	CreatedAt  time.Time `gorm:"index"`
-	Fee        float64
-	Status     Status
+	QiwiTxnID uint `gorm:"unique_index:idx_qiwi_txn"`
 
-	WalletID uint
+	TxnType       TxnType `gorm:"unique_index:idx_qiwi_txn"`
+	ProviderID    uint    // ?
+	Amount        float64
+	QiwiCreatedAt time.Time `gorm:"index"`
+	Fee           float64
+	Status        Status
+
+	Comment string
+
+	WalletID uint `gorm:"unique_index:idx_qiwi_txn"`
 }
 
 // Status represent status of txn
@@ -53,7 +61,7 @@ func CreateMultipleTxns(walletID uint, txns []Txn) (err error) {
 	for _, txn := range txns {
 		txn.WalletID = walletID
 		// ignore this errors
-		_ = tx.Create(txn).Error
+		_ = tx.Create(&txn).Error
 	}
 	err = tx.Commit().Error
 	return
@@ -61,17 +69,17 @@ func CreateMultipleTxns(walletID uint, txns []Txn) (err error) {
 
 // GetWalletTxns get lasts wallet txns
 func GetWalletTxns(walletID uint) (res []Txn, err error) {
-	err = NewTxnQuerySet(db).WalletIDEq(walletID).OrderDescByID().Limit(50).All(&res)
+	err = NewTxnQuerySet(db).WalletIDEq(walletID).OrderDescByQiwiTxnID().Limit(50).All(&res)
 	return
 }
 
-// GetLastTxn return last txn on wallet with walletID
-func GetLastTxn(walletID uint) (txnID uint, err error) {
+// GetLastQiwiTxn return last txn on wallet with walletID
+func GetLastQiwiTxn(walletID uint) (txnID uint, err error) {
 	txn := new(Txn)
-	err = NewTxnQuerySet(db).WalletIDEq(walletID).OrderDescByID().One(txn)
+	err = NewTxnQuerySet(db).WalletIDEq(walletID).OrderDescByQiwiTxnID().One(txn)
 	if err != nil {
 		return
 	}
-	txnID = txn.ID
+	txnID = txn.QiwiTxnID
 	return
 }

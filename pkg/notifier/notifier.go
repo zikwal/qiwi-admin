@@ -20,11 +20,7 @@ func Notify(cmd *NotifyCmd) {
 }
 
 // NotifyTxn get account apps and notify all apps about txn
-func NotifyTxn(txn models.Txn) (err error) {
-	wallet, err := models.GetWallet(txn.WalletID)
-	if err != nil {
-		return
-	}
+func NotifyTxn(wallet *models.Wallet, txn models.Txn) (err error) {
 	apps, err := models.Apps.List(wallet.OwnerID)
 	if err != nil {
 		return

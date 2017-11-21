@@ -5,8 +5,11 @@
 package cmd
 
 import (
+	"fmt"
+	"html/template"
 	"log"
 	"path/filepath"
+	"time"
 
 	"github.com/go-macaron/binding"
 	"github.com/go-macaron/session"
@@ -48,10 +51,18 @@ func newMacaron(ctx *cli.Context) (m *macaron.Macaron) {
 	}
 
 	m = macaron.Classic()
+	m.Use(func(ctx *macaron.Context) {
+		ctx.Data["startTime"] = time.Now()
+	})
 
 	// html templates
 	m.Use(macaron.Renderer(macaron.RenderOptions{
 		Layout: "layout",
+		Funcs: []template.FuncMap{map[string]interface{}{
+			"LoadTimes": func(startTime time.Time) string {
+				return fmt.Sprint(time.Since(startTime).Nanoseconds()/1e6) + "мс"
+			},
+		}},
 	}))
 
 	// sessions, auth, cookies
@@ -86,6 +97,7 @@ func startWeb(ctx *cli.Context) {
 		m.Post("/create", wallets.Create)
 		m.Get("/:id", wallets.Show)
 		m.Any("/:id/setting", wallets.Setting)
+		m.Get("/:id/delete", wallets.Delete)
 	}, auth.MustAuthorized)
 
 	m.Get("/dashboard", auth.MustAuthorized, groups.List)

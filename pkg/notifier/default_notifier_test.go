@@ -38,7 +38,7 @@ func TestDefaultNotifier(t *testing.T) {
 		log.Fatalln(err)
 	}
 	txn := models.Txn{
-		ID: 228,
+		QiwiTxnID: 228,
 	}
 
 	cmd := NewCmd("http://localhost:22228/handler", txn)

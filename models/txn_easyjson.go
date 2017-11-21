@@ -7,6 +7,7 @@ import (
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
 	jwriter "github.com/mailru/easyjson/jwriter"
+	time "time"
 )
 
 // suppress unused package warning
@@ -36,24 +37,48 @@ func easyjsonC4224a68DecodeGithubComZhuharevQiwiAdminModels(in *jlexer.Lexer, ou
 			continue
 		}
 		switch key {
-		case "id":
-			out.ID = uint(in.Uint())
+		case "qiwi_txn_id":
+			out.QiwiTxnID = uint(in.Uint())
 		case "txn_type":
 			out.TxnType = TxnType(in.Uint())
 		case "provider_id":
 			out.ProviderID = uint(in.Uint())
 		case "amount":
 			out.Amount = float64(in.Float64())
-		case "created_at":
+		case "qiwi_created_at":
 			if data := in.Raw(); in.Ok() {
-				in.AddError((out.CreatedAt).UnmarshalJSON(data))
+				in.AddError((out.QiwiCreatedAt).UnmarshalJSON(data))
 			}
 		case "fee":
 			out.Fee = float64(in.Float64())
 		case "status":
 			out.Status = Status(in.Uint())
+		case "comment":
+			out.Comment = string(in.String())
 		case "wallet_id":
 			out.WalletID = uint(in.Uint())
+		case "id":
+			out.ID = uint(in.Uint())
+		case "created_at":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.CreatedAt).UnmarshalJSON(data))
+			}
+		case "updated_at":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.UpdatedAt).UnmarshalJSON(data))
+			}
+		case "deleted_at":
+			if in.IsNull() {
+				in.Skip()
+				out.DeletedAt = nil
+			} else {
+				if out.DeletedAt == nil {
+					out.DeletedAt = new(time.Time)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.DeletedAt).UnmarshalJSON(data))
+				}
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -69,14 +94,14 @@ func easyjsonC4224a68EncodeGithubComZhuharevQiwiAdminModels(out *jwriter.Writer,
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"id\":"
+		const prefix string = ",\"qiwi_txn_id\":"
 		if first {
 			first = false
 			out.RawString(prefix[1:])
 		} else {
 			out.RawString(prefix)
 		}
-		out.Uint(uint(in.ID))
+		out.Uint(uint(in.QiwiTxnID))
 	}
 	{
 		const prefix string = ",\"txn_type\":"
@@ -109,14 +134,14 @@ func easyjsonC4224a68EncodeGithubComZhuharevQiwiAdminModels(out *jwriter.Writer,
 		out.Float64(float64(in.Amount))
 	}
 	{
-		const prefix string = ",\"created_at\":"
+		const prefix string = ",\"qiwi_created_at\":"
 		if first {
 			first = false
 			out.RawString(prefix[1:])
 		} else {
 			out.RawString(prefix)
 		}
-		out.Raw((in.CreatedAt).MarshalJSON())
+		out.Raw((in.QiwiCreatedAt).MarshalJSON())
 	}
 	{
 		const prefix string = ",\"fee\":"
@@ -139,6 +164,16 @@ func easyjsonC4224a68EncodeGithubComZhuharevQiwiAdminModels(out *jwriter.Writer,
 		out.Uint(uint(in.Status))
 	}
 	{
+		const prefix string = ",\"comment\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Comment))
+	}
+	{
 		const prefix string = ",\"wallet_id\":"
 		if first {
 			first = false
@@ -147,6 +182,50 @@ func easyjsonC4224a68EncodeGithubComZhuharevQiwiAdminModels(out *jwriter.Writer,
 			out.RawString(prefix)
 		}
 		out.Uint(uint(in.WalletID))
+	}
+	{
+		const prefix string = ",\"id\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Uint(uint(in.ID))
+	}
+	{
+		const prefix string = ",\"created_at\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Raw((in.CreatedAt).MarshalJSON())
+	}
+	{
+		const prefix string = ",\"updated_at\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Raw((in.UpdatedAt).MarshalJSON())
+	}
+	{
+		const prefix string = ",\"deleted_at\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		if in.DeletedAt == nil {
+			out.RawString("null")
+		} else {
+			out.Raw((*in.DeletedAt).MarshalJSON())
+		}
 	}
 	out.RawByte('}')
 }

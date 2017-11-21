@@ -25,7 +25,7 @@
       <input class="uk-input" type="text" name="limit" id="limit" placeholder="Месячный лимит" value="{{ .wallet.Limit }}">
     </div>
     <div class="uk-margin">
-      <button class="uk-button uk-button-primary">Сохранить</button>
+      <button class="uk-button uk-button-primary">Сохранить</button> <a class="uk-button uk-button-danger uk-float-right" href="/wallets/{{ .wallet.ID }}/delete">Удалить кошелёк</a>
     </div>
   </form>
 </div>

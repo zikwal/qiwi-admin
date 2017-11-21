@@ -65,7 +65,7 @@ func New(token string, opts ...Opt) *Client {
 		baseURL:     BaseURL,
 		openBaseURL: OpenBaseURL,
 		httpClient:  http.DefaultClient,
-		debug:       true,
+		debug:       false,
 	}
 
 	c.Payments = NewPayments(c)
@@ -142,7 +142,9 @@ func (c *Client) req(method, endpoint string, res interface{}, params ...interfa
 		} else {
 			switch v := params[0].(type) {
 			case url.Values:
-				color.Cyan("body: %v", v.Encode())
+				if c.debug {
+					color.Cyan("body: %v", v.Encode())
+				}
 				body = strings.NewReader(v.Encode())
 			case PaymentRequest,
 				SpecialComissionRequest:
@@ -151,7 +153,9 @@ func (c *Client) req(method, endpoint string, res interface{}, params ...interfa
 				if err != nil {
 					return
 				}
-				color.Cyan("body: %s", bts)
+				if c.debug {
+					color.Cyan("body: %s", bts)
+				}
 				body = bytes.NewReader(bts)
 			}
 
@@ -180,14 +184,22 @@ func (c *Client) req(method, endpoint string, res interface{}, params ...interfa
 			}
 		}
 	}
-	color.Cyan("token %s", c.token)
-	color.Cyan("%v", req.Header)
+	if c.debug {
+		color.Cyan("token %s", c.token)
+		color.Cyan("%v", req.Header)
+	}
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		if err, has := codeToError[resp.StatusCode]; has {
+			return err
+		}
+	}
 
 	return c.decodeResponse(resp.Body, res)
 }

@@ -7,6 +7,7 @@ package context
 import (
 	"github.com/go-macaron/session"
 	"github.com/zhuharev/qiwi-admin/models"
+	"github.com/zhuharev/qiwi-admin/pkg/setting"
 	macaron "gopkg.in/macaron.v1"
 )
 
@@ -27,6 +28,8 @@ func Contexter() macaron.Handler {
 			Flash:   f,
 			Session: sess,
 		}
+
+		ctx.Data["AppVer"] = setting.AppVer
 
 		if userIface := sess.Get("user_id"); userIface != nil {
 			if userID, ok := userIface.(uint); ok {

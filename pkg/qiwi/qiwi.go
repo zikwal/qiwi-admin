@@ -16,7 +16,7 @@ import (
 
 // CheckToken simple token checker
 func CheckToken(token string) (walletID uint64, blocked bool, balance float64, err error) {
-	client := qiwi.New(token, qiwi.Debug)
+	client := qiwi.New(token)
 	profile, err := client.Profile.Current()
 	if err != nil {
 		return
@@ -42,7 +42,7 @@ func CheckToken(token string) (walletID uint64, blocked bool, balance float64, e
 }
 
 func convertQiwiTxn(qiwiTxn qiwi.Txn) (txn models.Txn) {
-	txn.ID = uint(qiwiTxn.TxnID)
+	txn.QiwiTxnID = uint(qiwiTxn.TxnID)
 	// TxnType    TxnType
 	switch qiwiTxn.Type {
 	case "IN":
@@ -56,8 +56,8 @@ func convertQiwiTxn(qiwiTxn qiwi.Txn) (txn models.Txn) {
 	txn.ProviderID = uint(qiwiTxn.Provider.ID)
 	// Amount     float64
 	txn.Amount = qiwiTxn.Sum.Amount
-	// CreatedAt  time.Time
-	txn.CreatedAt = qiwiTxn.Date
+	// QiwiCreatedAt  time.Time
+	txn.QiwiCreatedAt = qiwiTxn.Date
 	// Fee        float64
 	txn.Fee = qiwiTxn.Commission.Amount
 	// Status     Status
@@ -69,12 +69,14 @@ func convertQiwiTxn(qiwiTxn qiwi.Txn) (txn models.Txn) {
 	case "ERROR":
 		txn.Status = models.Error
 	}
+
+	txn.Comment = qiwiTxn.Comment
 	return
 }
 
 // GetLastTxns call qiwi api and returns last 50 txns
 func GetLastTxns(token string, walletID uint64) (res []models.Txn, err error) {
-	client := qiwi.New(token, qiwi.Debug, qiwi.Wallet(fmt.Sprint(walletID)))
+	client := qiwi.New(token, qiwi.Wallet(fmt.Sprint(walletID)))
 	payments, err := client.Payments.History(50)
 	if err != nil {
 		return
@@ -87,7 +89,7 @@ func GetLastTxns(token string, walletID uint64) (res []models.Txn, err error) {
 
 // GetStat return stat of current month
 func GetStat(token string, walletID uint64) (incoming, outgoing float64, err error) {
-	client := qiwi.New(token, qiwi.Debug, qiwi.Wallet(fmt.Sprint(walletID)))
+	client := qiwi.New(token, qiwi.Wallet(fmt.Sprint(walletID)))
 	stat, err := client.Payments.Stat(now.BeginningOfMonth(), now.EndOfMonth())
 	if err != nil {
 		return
@@ -103,7 +105,7 @@ func GetStat(token string, walletID uint64) (incoming, outgoing float64, err err
 
 // DetectProvider detect provider
 func DetectProvider(token string, to string) (id int, err error) {
-	client := qiwi.New(token, qiwi.Debug)
+	client := qiwi.New(token)
 	id, err = client.Cards.Detect(to)
 	if err != nil {
 		return
@@ -113,7 +115,7 @@ func DetectProvider(token string, to string) (id int, err error) {
 
 // Transfer transfer money
 func Transfer(token, to string, amount float64, comments ...string) (transactionID uint, err error) {
-	client := qiwi.New(token, qiwi.Debug)
+	client := qiwi.New(token)
 
 	var (
 		// qiwi to qiwi
@@ -131,7 +133,7 @@ func Transfer(token, to string, amount float64, comments ...string) (transaction
 }
 
 func TransferWithProvider(providerID int, token, to string, amount float64, comments ...string) (transactionID uint, err error) {
-	client := qiwi.New(token, qiwi.Debug)
+	client := qiwi.New(token)
 	_, err = client.Cards.Payment(providerID, amount, to, comments...)
 	if err != nil {
 		return
@@ -178,7 +180,7 @@ func TransferFromGroup(groupID, userID uint, to string, restAmount float64) (err
 			errs = append(errs, fmt.Errorf("На кошельке %d не хватает средств для вывода", walletID))
 			continue
 		}
-		client := qiwi.New(wallet.Token, qiwi.Debug)
+		client := qiwi.New(wallet.Token)
 		if providerID == 0 {
 			providerID, err = client.Cards.Detect(to)
 			if err != nil {
@@ -207,7 +209,7 @@ func TransferFromGroup(groupID, userID uint, to string, restAmount float64) (err
 
 // Fee returns fee of payment
 func Fee(token string, providerID int, to string, amount float64) (fee float64, err error) {
-	client := qiwi.New(token, qiwi.Debug)
+	client := qiwi.New(token)
 	feeResp, err := client.Payments.SpecialComission(providerID, to, amount)
 	return feeResp.QwCommission.Amount, err
 }

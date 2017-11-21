@@ -27,7 +27,7 @@
       </div>
     </nav>
     {{ with .Flash.ErrorMsg }}
-    <div class="container">
+    <div class="uk-container">
       <div class="uk-alert uk-alert-danger">
         {{ . }}
         </div>
@@ -39,7 +39,14 @@
           </div>
         </div>{{ end }}
   {{ yield }}
+
+    <div class="uk-margin">
+      <hr class="uk-divider-icon">
+      <div class="uk-float-right">Версия: {{ .AppVer }} | Страница: <b>{{ LoadTimes .startTime }}</b></div>
     </div>
+    </div>
+
+
   <!-- <script src="/js/bundle.js"></script> -->
 </body>
 </html>
