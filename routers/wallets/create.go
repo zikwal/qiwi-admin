@@ -23,9 +23,8 @@ func Create(ctx *context.Context) {
 	)
 
 	walletID, blocked, balance, err := qiwi.CheckToken(token)
-	if err != nil {
-		ctx.Flash.Error(fmt.Sprintf("Ошибка при проверке кошелька: %s", err))
-		color.Red("%s", err)
+	if ctx.HasError(err) {
+		color.Red("Ошибка при проверке кошелька: %s", err)
 		return
 	}
 	wallet := new(models.Wallet)
