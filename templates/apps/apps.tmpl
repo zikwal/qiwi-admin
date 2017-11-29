@@ -21,4 +21,13 @@
   </div>
   <button class="uk-button uk-button-primary">Сохранить</button>
 </form>
+
+<h3>Отправить тестовый запрос</h3>
+<form action="/dashboard/apps/test" method="post">
+  <input type="hidden" name="webhook_url" value="{{ .WebHookURL }}" id="">
+  <div class="uk-margin">
+    <input class="uk-input" type="text" name="comment" placeholder="Коментарий" id="">
+  </div>
+  <button class="uk-button uk-button-primary">Отправить</button>
+</form>
 {{ end }}

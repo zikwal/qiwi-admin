@@ -105,6 +105,7 @@ func startWeb(ctx *cli.Context) {
 		m.Get("/apps", apps.Apps)
 		m.Post("/apps/:appID/webhook", apps.SaveWebHookURL)
 		m.Post("/apps/create", apps.Create)
+		m.Post("/apps/test", apps.Test)
 	}, auth.MustAuthorized)
 
 	m.Any("/transfer", transfers.Transfer)
