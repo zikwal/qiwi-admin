@@ -13,6 +13,11 @@ import (
 
 // Index shows index page
 func Index(ctx *context.Context) {
+	walletCount, _ := models.WalletCount()
+	usersCount, _ := models.UserCount()
+
+	ctx.Data["walletCount"] = walletCount
+	ctx.Data["usersCount"] = usersCount
 	ctx.HTML(200, "index")
 }
 

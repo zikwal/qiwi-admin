@@ -6,6 +6,10 @@
         <div class="uk-grid-match uk-child-width-1-2@m uk-grid">
             <div>
                 <p>Удобная администрация qiwi-кошельков</p>
+                <div class="panel">
+                  {{ with .walletCount }}Всего кошельков: <b>{{ . }}</b>{{end}}<br />
+                  {{ with .usersCount }}Пользователей в системе: <b>{{ . }}</b>{{end}}
+                </div>
             </div>
             <div>
                 <p>Регистрация занимает 2 минуты и не требует подтверждения</p>

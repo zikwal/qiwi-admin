@@ -102,3 +102,13 @@ func GetWalletCounters(walletID uint) (wc WalletCounters, err error) {
 	log.Println(wc)
 	return
 }
+
+// WalletCount returns all system wallet count
+func WalletCount() (int, error) {
+	return NewWalletQuerySet(db).Count()
+}
+
+// UserCount returns number of users
+func UserCount() (int, error) {
+	return NewUserQuerySet(db).Count()
+}
