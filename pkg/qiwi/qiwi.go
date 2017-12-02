@@ -6,9 +6,9 @@ package qiwi
 
 import (
 	"fmt"
+	"net/http"
 	"strings"
 
-	"github.com/fatih/color"
 	"github.com/jinzhu/now"
 	"github.com/zhuharev/qiwi"
 	"github.com/zhuharev/qiwi-admin/models"
@@ -19,9 +19,16 @@ func CheckToken(token string) (walletID uint64, blocked bool, balance float64, e
 	client := qiwi.New(token)
 	profile, err := client.Profile.Current()
 	if err != nil {
+		// TODO: check if this work fine
+		// qiwi api should resp 400 code if token invalid
+		// but usually it answers 500
+		if err.Error() == http.StatusText(http.StatusInternalServerError) {
+			blocked = true
+			err = nil
+			return
+		}
 		return
 	}
-	color.Green("%v", profile)
 	walletID = uint64(profile.ContractInfo.ContractID)
 	blocked = profile.ContractInfo.Blocked
 	if blocked {
@@ -33,7 +40,6 @@ func CheckToken(token string) (walletID uint64, blocked bool, balance float64, e
 	if err != nil {
 		return
 	}
-
 	if len(balanceResp.Accounts) == 0 {
 		return
 	}
