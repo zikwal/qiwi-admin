@@ -5,6 +5,9 @@
 package apps
 
 import (
+	"time"
+
+	"github.com/jinzhu/gorm"
 	"github.com/zhuharev/qiwi-admin/models"
 	"github.com/zhuharev/qiwi-admin/pkg/context"
 	"github.com/zhuharev/qiwi-admin/pkg/notifier"
@@ -49,8 +52,10 @@ func Test(ctx *context.Context) {
 	)
 
 	txn := models.Txn{
-		Amount:  100.0,
-		Comment: coment,
+		Amount:    100.0,
+		Comment:   coment,
+		Model:     gorm.Model{ID: uint(time.Now().UnixNano())},
+		QiwiTxnID: uint(time.Now().UnixNano()),
 	}
 
 	cmd := notifier.NewCmd(uri, txn)
