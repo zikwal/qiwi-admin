@@ -16,6 +16,9 @@ type Group struct {
 	Name    string
 	OwnerID uint
 
+	AutoTransferObjectID  uint
+	AutTransferObjectType ObjectType
+
 	Counters GroupCounters `gorm:"-"`
 }
 
@@ -64,5 +67,15 @@ type GroupCounters struct {
 func GetGroupCounters(groupID uint) (res GroupCounters, err error) {
 	sql := `select sum(wallets.balance) as balance,count() as count from wallets where "wallets"."deleted_at" IS NULL AND group_id = ?`
 	err = db.Raw(sql, groupID).Scan(&res).Error
+	return
+}
+
+// GetGroupFreeWallet returns wallet, which the cat receive amount size payment
+func GetGroupFreeWallet(groupID uint, amount uint) (wallet *Wallet, err error) {
+	sql := `SELECT * FROM wallets
+	WHERE group_id = ?
+	AND balance + ? < 15000`
+	wallet = new(Wallet)
+	err = db.Raw(sql, groupID, amount).Scan(wallet).Error
 	return
 }

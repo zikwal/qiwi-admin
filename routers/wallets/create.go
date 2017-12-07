@@ -35,6 +35,7 @@ func Create(ctx *context.Context) {
 	wallet.Token = token
 	wallet.OwnerID = ownerID
 	wallet.GroupID = uint(ctx.QueryInt64("group"))
+	wallet.Limit = 15000
 
 	err = models.CreateWallet(wallet)
 	if ctx.HasError(err) {

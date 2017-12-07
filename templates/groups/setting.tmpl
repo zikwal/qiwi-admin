@@ -1,0 +1,20 @@
+<div class="uk-margin">
+  <ul class="uk-breadcrumb">
+    <li><a href="/dashboard">Кошельки</a></li>
+    <li><a href="/groups/{{ .group.ID }}"> {{ .group.Name }} </a></li>
+    <li><span> Настройки </span></li>
+  </ul>
+</div>
+
+<div class="uk-margin">
+  <form action="" class="uk-form" method="post">
+    <div class="uk-margin">
+      <label for="autotransfer_group">Группа для автоматического вывода (все входящие пополнения будут автоматически переведены в эту группу)</label>
+      <select class="uk-select" name="autotransfer_group" id="autotransfer_group">
+        <option value="0">Отключить</option>
+        {{range .groups }}<option {{ if eq $.group.AutoTransferObjectID .ID}}selected{{end}} value="{{ .ID }}">{{ .Name }}</option>{{ end }}
+      </select>
+    </div>
+    <button class="uk-button uk-button-primary">Сохранить</button>
+  </form>
+</div>

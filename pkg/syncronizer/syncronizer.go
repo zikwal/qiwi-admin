@@ -5,6 +5,8 @@
 package syncronizer
 
 import (
+	"fmt"
+	"log"
 	"time"
 
 	"github.com/fatih/color"
@@ -46,6 +48,10 @@ func Sync(walletID uint) (err error) {
 		return
 	}
 
+	if wallet.Balance == balance && time.Since(wallet.UpdatedAt) < time.Hour {
+		return
+	}
+
 	// todo notify change
 	wallet.Blocked = blocked
 	wallet.Balance = balance
@@ -63,6 +69,11 @@ func Sync(walletID uint) (err error) {
 		return err
 	}
 
+	group, err := models.GetGroup(wallet.GroupID)
+	if err != nil {
+		return err
+	}
+
 	var (
 		insertTxns []models.Txn
 	)
@@ -76,6 +87,19 @@ func Sync(walletID uint) (err error) {
 			if err != nil {
 				color.Red("Error when making webhook: %s", err)
 			}
+
+			if group.AutTransferObjectType == models.ObjectGroup && group.AutoTransferObjectID != 0 {
+				targetWallet, err := models.GetGroupFreeWallet(group.ID, uint(txn.Amount))
+				if err != nil {
+					color.Red("Error when getting free master-group wallet: %s", err)
+					continue
+				}
+				_, err = qiwi.Transfer(wallet.Token, fmt.Sprintf("+%d", targetWallet.WalletID), txn.Amount)
+				if err != nil {
+					log.Printf("[autotransfer] error transfer grom group: %d", err)
+				}
+			}
+
 		}
 	}
 
