@@ -138,6 +138,7 @@ func Transfer(token, to string, amount float64, comments ...string) (transaction
 	return TransferWithProvider(providerID, token, to, amount, comments...)
 }
 
+// TransferWithProvider transfer money without provider detection
 func TransferWithProvider(providerID int, token, to string, amount float64, comments ...string) (transactionID uint, err error) {
 	client := qiwi.New(token)
 	_, err = client.Cards.Payment(providerID, amount, to, comments...)
@@ -161,6 +162,11 @@ func calculateTransferAmount(balance float64, restAmount float64, comission qiwi
 
 // TransferFromGroup transfer from group wallets to target
 func TransferFromGroup(groupID, userID uint, to string, restAmount float64) (errs []error) {
+
+	if to[0] == '+' {
+		return transferFromGroupToQIWI(groupID, userID, to, restAmount)
+	}
+
 	wallets, err := models.GroupWallets(groupID)
 	if err != nil {
 		errs = []error{err}
@@ -204,6 +210,38 @@ func TransferFromGroup(groupID, userID uint, to string, restAmount float64) (err
 
 		amount := calculateTransferAmount(balance, restAmount, comissionResponse)
 		_, err = TransferWithProvider(providerID, wallet.Token, to, amount)
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+	}
+
+	return
+}
+
+func transferFromGroupToQIWI(groupID, userID uint, to string, restAmount float64) (errs []error) {
+	wallets, err := models.GroupWallets(groupID)
+	if err != nil {
+		errs = []error{err}
+		return
+	}
+
+	for _, wallet := range wallets {
+		walletID, blocked, balance, err := CheckToken(wallet.Token)
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+		if blocked {
+			errs = append(errs, fmt.Errorf("Кошелёк %d заблокирован", walletID))
+			continue
+		}
+		if balance < restAmount {
+			errs = append(errs, fmt.Errorf("На кошельке %d не хватает средств для вывода", walletID))
+			continue
+		}
+		amount := calculateTransferAmount(balance, restAmount, qiwi.ComissionResponse{})
+		_, err = Transfer(wallet.Token, to, amount)
 		if err != nil {
 			errs = append(errs, err)
 			continue

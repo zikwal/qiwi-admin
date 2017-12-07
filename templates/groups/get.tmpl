@@ -43,11 +43,11 @@
         <td>{{ .group.Counters.Count }}</td>
       </tr>
     </table>
-    <h4>Перевести всё на карту</h4>
+    <h4>Перевести всё</h4>
     <form action="/transfer/groups/{{ .group.ID }}" method="post" class="uk-form">
       <div class="uk-margin">
         <label for="to"></label>
-        <input type="text" placeholder="Номер карты" class="uk-input" name="to" id="to">
+        <input type="text" placeholder="Номер карты или кошелёк" class="uk-input" name="to" id="to">
       </div>
       <div class="uk-margin">
         <button class="uk-button uk-button-primary">Перевести</button>
