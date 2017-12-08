@@ -38,6 +38,7 @@ func NewContext() (err error) {
 		&Txn{},
 		&Wallet{},
 		&Group{},
-		&App{}).Error
+		&App{},
+		&Autotransfer{}).Error
 	return
 }

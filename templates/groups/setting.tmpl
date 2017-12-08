@@ -18,3 +18,9 @@
     <button class="uk-button uk-button-primary">Сохранить</button>
   </form>
 </div>
+
+<h3>История автопереводов</h3>
+
+{{ range .auto_history }}
+Перевод {{ .Amount }} на {{ .SourceID }}<br />
+{{ end }}

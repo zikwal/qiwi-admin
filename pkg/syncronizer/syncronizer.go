@@ -89,15 +89,31 @@ func Sync(walletID uint) (err error) {
 			}
 
 			if group.AutTransferObjectType == models.ObjectGroup && group.AutoTransferObjectID != 0 {
-				targetWallet, err := models.GetGroupFreeWallet(group.ID, uint(txn.Amount))
+				targetWallet, err := models.GetGroupFreeWallet(group.AutoTransferObjectID, uint(txn.Amount))
 				if err != nil {
 					color.Red("Error when getting free master-group wallet: %s", err)
 					continue
 				}
+				color.Green("[autotransfer] from wallet %d to %d amount: %f", wallet.ID, targetWallet.ID, txn.Amount)
 				_, err = qiwi.Transfer(wallet.Token, fmt.Sprintf("+%d", targetWallet.WalletID), txn.Amount)
 				if err != nil {
-					log.Printf("[autotransfer] error transfer grom group: %d", err)
+					log.Printf("[autotransfer] error transfer from group: %d", err)
+					continue
 				}
+
+				autotransferLogEntry := models.Autotransfer{
+					SourceID:   wallet.ID,
+					SourceType: models.ObjectGroup,
+					TargetID:   fmt.Sprint(targetWallet.WalletID),
+					TargetType: models.ObjectWallet,
+					Amount:     uint(txn.Amount),
+				}
+
+				err = models.AutotransferSave(&autotransferLogEntry)
+				if err != nil {
+					log.Printf("[autotransfer] error save autotransfer from group: %d", err)
+				}
+
 			}
 
 		}

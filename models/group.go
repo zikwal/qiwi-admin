@@ -72,10 +72,7 @@ func GetGroupCounters(groupID uint) (res GroupCounters, err error) {
 
 // GetGroupFreeWallet returns wallet, which the cat receive amount size payment
 func GetGroupFreeWallet(groupID uint, amount uint) (wallet *Wallet, err error) {
-	sql := `SELECT * FROM wallets
-	WHERE group_id = ?
-	AND balance + ? < 15000`
 	wallet = new(Wallet)
-	err = db.Raw(sql, groupID, amount).Scan(wallet).Error
+	err = NewWalletQuerySet(db).GroupIDEq(groupID).BalanceLt(15000 - float64(amount)).One(wallet)
 	return
 }

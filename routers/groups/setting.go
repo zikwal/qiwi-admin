@@ -37,6 +37,12 @@ func Setting(ctx *context.Context) {
 		return
 	}
 
+	autothistory, err := models.AutotransferLast(groupID)
+	if ctx.HasError(err) {
+		return
+	}
+
+	ctx.Data["auto_history"] = autothistory
 	ctx.Data["group"] = group
 	ctx.Data["groups"] = groups
 	ctx.Data["wallets"] = wallets
