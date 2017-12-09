@@ -14,7 +14,7 @@ import (
 )
 
 // AppVer current version of app
-var AppVer = "0.0.13"
+var AppVer = "0.0.14"
 
 func init() {
 	setting.AppVer = AppVer

@@ -44,7 +44,10 @@ var (
 func newMacaron(ctx *cli.Context) (m *macaron.Macaron) {
 
 	setting.App.DataDir = ctx.String("data-dir")
-	setting.Verbose = ctx.Bool("verbose")
+	setting.Verbose = ctx.GlobalBool("verbose")
+	if setting.Verbose {
+		log.Println("Запуск в режиме расширенного логгирования")
+	}
 
 	err := routers.GlobalInit()
 	if err != nil {
