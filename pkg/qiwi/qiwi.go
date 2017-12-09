@@ -158,6 +158,7 @@ func TransferWithProvider(providerID int, token, to string, amount float64, comm
 }
 
 func calculateTransferAmount(balance float64, restAmount float64, comission qiwi.ComissionResponse) (amount float64) {
+	amount = balance
 	for _, com := range comission.Content.Terms.Commission.Ranges {
 		if com.Fixed != 0 {
 			amount -= com.Fixed
