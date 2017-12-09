@@ -6,6 +6,7 @@ package qiwi
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 
@@ -249,6 +250,7 @@ func transferFromGroupToQIWI(groupID, userID uint, to string, restAmount float64
 			continue
 		}
 		amount := calculateTransferAmount(balance, restAmount, qiwi.ComissionResponse{})
+		log.Printf("[transfer] transfer %f from %d to %s", amount, wallet.WalletID, to)
 		_, err = Transfer(wallet.Token, to, amount)
 		if err != nil {
 			errs = append(errs, err)
