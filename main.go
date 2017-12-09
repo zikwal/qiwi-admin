@@ -29,6 +29,11 @@ func main() {
 		Commands: []cli.Command{
 			cmd.CmdWeb,
 		},
+		Flags: []cli.Flag{
+			cli.BoolFlag{
+				Name: "verbose, d",
+			},
+		},
 	}
 	app.Run(os.Args)
 }

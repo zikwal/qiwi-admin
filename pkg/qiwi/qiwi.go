@@ -12,11 +12,19 @@ import (
 	"github.com/jinzhu/now"
 	"github.com/zhuharev/qiwi"
 	"github.com/zhuharev/qiwi-admin/models"
+	"github.com/zhuharev/qiwi-admin/pkg/setting"
 )
+
+func opts() []qiwi.Opt {
+	if setting.Verbose {
+		return []qiwi.Opt{qiwi.Debug}
+	}
+	return []qiwi.Opt{}
+}
 
 // CheckToken simple token checker
 func CheckToken(token string) (walletID uint64, blocked bool, balance float64, err error) {
-	client := qiwi.New(token)
+	client := qiwi.New(token, opts()...)
 	profile, err := client.Profile.Current()
 	if err != nil {
 		// TODO: check if this work fine
@@ -82,7 +90,7 @@ func convertQiwiTxn(qiwiTxn qiwi.Txn) (txn models.Txn) {
 
 // GetLastTxns call qiwi api and returns last 50 txns
 func GetLastTxns(token string, walletID uint64) (res []models.Txn, err error) {
-	client := qiwi.New(token, qiwi.Wallet(fmt.Sprint(walletID)))
+	client := qiwi.New(token, append(opts(), qiwi.Wallet(fmt.Sprint(walletID)))...)
 	payments, err := client.Payments.History(50)
 	if err != nil {
 		return
@@ -95,7 +103,7 @@ func GetLastTxns(token string, walletID uint64) (res []models.Txn, err error) {
 
 // GetStat return stat of current month
 func GetStat(token string, walletID uint64) (incoming, outgoing float64, err error) {
-	client := qiwi.New(token, qiwi.Wallet(fmt.Sprint(walletID)))
+	client := qiwi.New(token, append(opts(), qiwi.Wallet(fmt.Sprint(walletID)))...)
 	stat, err := client.Payments.Stat(now.BeginningOfMonth(), now.EndOfMonth())
 	if err != nil {
 		return
@@ -111,7 +119,7 @@ func GetStat(token string, walletID uint64) (incoming, outgoing float64, err err
 
 // DetectProvider detect provider
 func DetectProvider(token string, to string) (id int, err error) {
-	client := qiwi.New(token)
+	client := qiwi.New(token, opts()...)
 	id, err = client.Cards.Detect(to)
 	if err != nil {
 		return
@@ -121,7 +129,7 @@ func DetectProvider(token string, to string) (id int, err error) {
 
 // Transfer transfer money
 func Transfer(token, to string, amount float64, comments ...string) (transactionID uint, err error) {
-	client := qiwi.New(token)
+	client := qiwi.New(token, opts()...)
 
 	var (
 		// qiwi to qiwi
@@ -140,7 +148,7 @@ func Transfer(token, to string, amount float64, comments ...string) (transaction
 
 // TransferWithProvider transfer money without provider detection
 func TransferWithProvider(providerID int, token, to string, amount float64, comments ...string) (transactionID uint, err error) {
-	client := qiwi.New(token)
+	client := qiwi.New(token, opts()...)
 	_, err = client.Cards.Payment(providerID, amount, to, comments...)
 	if err != nil {
 		return
@@ -253,7 +261,7 @@ func transferFromGroupToQIWI(groupID, userID uint, to string, restAmount float64
 
 // Fee returns fee of payment
 func Fee(token string, providerID int, to string, amount float64) (fee float64, err error) {
-	client := qiwi.New(token)
+	client := qiwi.New(token, opts()...)
 	feeResp, err := client.Payments.SpecialComission(providerID, to, amount)
 	return feeResp.QwCommission.Amount, err
 }

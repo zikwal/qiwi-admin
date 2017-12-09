@@ -2,7 +2,7 @@
 init_cmds = [
 	["go", "install"],
 	["go", "build"],
-	["./qiwi-admin", "web"]
+	["./qiwi-admin", "-d", "web"]
 ]									# Commands run in start
 watch_all = true					# Watch all sub-directories
 watch_dirs = ["cmd", "models", "pkg", "routers"]						# Directories to watch
@@ -15,7 +15,7 @@ graceful_kill = false				# Wait for exit and before directly kill
 cmds = [
 	["go", "install"],
 	["go", "build"],
-	["./qiwi-admin", "web"]
+	["./qiwi-admin", "-d", "web"]
 ]									# Commands to run
 
 [sync]

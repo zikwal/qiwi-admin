@@ -44,6 +44,7 @@ var (
 func newMacaron(ctx *cli.Context) (m *macaron.Macaron) {
 
 	setting.App.DataDir = ctx.String("data-dir")
+	setting.Verbose = ctx.Bool("verbose")
 
 	err := routers.GlobalInit()
 	if err != nil {

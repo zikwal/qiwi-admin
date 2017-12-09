@@ -5,6 +5,8 @@
 package setting
 
 var (
+	// Verbose enable debug output
+	Verbose bool
 	// AppVer current app version
 	AppVer string
 	// App main config
