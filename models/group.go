@@ -76,3 +76,10 @@ func GetGroupFreeWallet(groupID uint, amount uint) (wallet *Wallet, err error) {
 	err = NewWalletQuerySet(db).GroupIDEq(groupID).BalanceLt(15000 - float64(amount)).One(wallet)
 	return
 }
+
+// DeleteGroup remove group from db
+func DeleteGroup(groupID uint) error {
+	gr := new(Group)
+	gr.ID = groupID
+	return db.Delete(gr).Error
+}

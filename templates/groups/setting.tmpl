@@ -15,7 +15,7 @@
         {{range .groups }}<option {{ if eq $.group.AutoTransferObjectID .ID}}selected{{end}} value="{{ .ID }}">{{ .Name }}</option>{{ end }}
       </select>
     </div>
-    <button class="uk-button uk-button-primary">Сохранить</button>
+    <button class="uk-button uk-button-primary">Сохранить</button>  <a class="uk-button uk-button-danger uk-float-right" href="/groups/{{ .group.ID }}/delete">Удалить группу</a>
   </form>
 </div>
 
