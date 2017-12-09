@@ -88,7 +88,7 @@ func Sync(walletID uint) (err error) {
 				color.Red("Error when making webhook: %s", err)
 			}
 
-			if group.AutTransferObjectType == models.ObjectGroup && group.AutoTransferObjectID != 0 {
+			if txn.TxnType == models.In && group.AutTransferObjectType == models.ObjectGroup && group.AutoTransferObjectID != 0 {
 				targetWallet, err := models.GetGroupFreeWallet(group.AutoTransferObjectID, uint(txn.Amount))
 				if err != nil {
 					color.Red("Error when getting free master-group wallet: %s", err)
