@@ -7,10 +7,15 @@ package auth
 import (
 	"github.com/zhuharev/qiwi-admin/models"
 	"github.com/zhuharev/qiwi-admin/pkg/context"
+	"github.com/zhuharev/qiwi-admin/pkg/setting"
 )
 
 // Reg shows registration form
 func Reg(ctx *context.Context, af models.AuthForm) {
+	if setting.App.Reg.Disabled {
+		ctx.Error(404, "Страница не найдена")
+		return
+	}
 	if ctx.Req.Method == "POST" {
 		user, err := models.CreateUser(af)
 		if ctx.HasError(err) {

@@ -37,6 +37,9 @@ var (
 				Name:  "data-dir",
 				Value: "./data",
 			},
+			cli.BoolFlag{
+				Name: "prod",
+			},
 		},
 	}
 )
@@ -49,7 +52,7 @@ func newMacaron(ctx *cli.Context) (m *macaron.Macaron) {
 		log.Println("Запуск в режиме расширенного логгирования")
 	}
 
-	err := routers.GlobalInit()
+	err := routers.GlobalInit(ctx)
 	if err != nil {
 		log.Fatalln(err)
 	}
