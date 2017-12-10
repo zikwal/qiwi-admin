@@ -90,7 +90,7 @@ func startWeb(ctx *cli.Context) {
 
 	m.Any("/auth", auth.RedirectAutorized, binding.Bind(models.AuthForm{}), auth.Auth)
 	m.Any("/reg", auth.RedirectAutorized, binding.Bind(models.AuthForm{}), auth.Reg)
-	m.Get("/logout", auth.Logout)
+	m.Get("/logout", auth.MustAuthorized, auth.Logout)
 
 	m.Group("/groups", func() {
 		m.Get("/:groupID", groups.Get)
@@ -114,13 +114,13 @@ func startWeb(ctx *cli.Context) {
 		m.Post("/apps/test", apps.Test)
 	}, auth.MustAuthorized)
 
-	m.Any("/transfer", transfers.Transfer)
-	m.Post("/transfer/groups/:groupID", transfers.TransferFromGroup)
+	m.Any("/transfer", transfers.Transfer, auth.MustAuthorized)
+	m.Post("/transfer/groups/:groupID", transfers.TransferFromGroup, auth.MustAuthorized)
 
-	m.Get("/setting", accounts.Setting)
+	m.Get("/setting", accounts.Setting, auth.MustAuthorized)
 
 	m.Group("/users", func() {
-		m.Post("/create", binding.Bind(models.AuthForm{}), accounts.Create)
+		m.Post("/create", auth.MustAuthorized, binding.Bind(models.AuthForm{}), accounts.Create)
 	})
 
 	m.Run()
