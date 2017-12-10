@@ -163,6 +163,10 @@
 			"ImportPath": "gopkg.in/macaron.v1",
 			"Comment": "v1.2.3",
 			"Rev": "534b5803c7c0bfb3a59632359a94bc761d393d4c"
+		},
+		{
+			"ImportPath": "gopkg.in/yaml.v2",
+			"Rev": "eb3733d160e74a9c7e442f435eb3bea458e1d19f"
 		}
 	]
 }
