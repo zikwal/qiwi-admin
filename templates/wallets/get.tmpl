@@ -67,13 +67,15 @@
         <thead>
             <tr>
                 <th>#</th>
+                <th>Статус</th>
                 <th>Сумма</th>
                 <th>Дата</th>
             </tr>
         </thead>
         <tbody>
             {{ range .transactions}}<tr>
-                <td>{{ .QiwiTxnID }} {{  .Status }}</td>
+                <td>{{ .QiwiTxnID }} </td>
+                <td>{{ if eq  .Status 3}}<span class="uk-text-danger">Ошибка</span>{{else}}<span class="uk-text-success">Завершена</span>{{end}}</td>
                 <td class="uk-text-{{ if eq .TxnType 1 }}success{{else}}danger{{end}}">{{ if eq .TxnType 1 }}+{{else}}-{{end}}{{ .Amount }}</td>
                 <td>{{ .QiwiCreatedAt.Format "02.01.2006 15:04"}}</td>
             </tr>{{ end }}
