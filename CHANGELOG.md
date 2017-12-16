@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.2.0] - 2017-12-16
+### Добавлено
+- Трэйдинг на localbitcoins.net
+
 ## [0.1.0] - 2017-12-09
 ### Добавлено
 - Удаление групп
