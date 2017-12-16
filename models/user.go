@@ -20,6 +20,9 @@ type User struct {
 
 	Username       string `gorm:"unique_index"`
 	HashedPassword []byte
+
+	LocalBitcoinsKey    string
+	LocalBitcoinsSecret string
 }
 
 // AuthForm used in binding

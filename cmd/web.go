@@ -21,6 +21,7 @@ import (
 	"github.com/zhuharev/qiwi-admin/routers/accounts"
 	"github.com/zhuharev/qiwi-admin/routers/apps"
 	"github.com/zhuharev/qiwi-admin/routers/auth"
+	"github.com/zhuharev/qiwi-admin/routers/exchange"
 	"github.com/zhuharev/qiwi-admin/routers/groups"
 	"github.com/zhuharev/qiwi-admin/routers/transfers"
 	"github.com/zhuharev/qiwi-admin/routers/wallets"
@@ -117,10 +118,16 @@ func startWeb(ctx *cli.Context) {
 		m.Post("/apps/test", apps.Test)
 	}, auth.MustAuthorized)
 
+	m.Group("/exchange", func() {
+		m.Get("/", exchange.Index)
+		m.Post("/wallets/:id", exchange.Wallet)
+	}, auth.MustAuthorized)
+
 	m.Any("/transfer", transfers.Transfer, auth.MustAuthorized)
 	m.Post("/transfer/groups/:groupID", transfers.TransferFromGroup, auth.MustAuthorized)
 
 	m.Get("/setting", accounts.Setting, auth.MustAuthorized)
+	m.Post("/account/setting", auth.MustAuthorized, accounts.SaveSetting)
 
 	m.Group("/users", func() {
 		m.Post("/create", auth.MustAuthorized, binding.Bind(models.AuthForm{}), accounts.Create)

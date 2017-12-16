@@ -60,6 +60,10 @@
         <button class="uk-button uk-button-primary">Перевести</button>
       </div>
     </form>
+    <h4>Вывести всё в bitcoin</h4>
+    <form action="/exchange/wallets/{{ .wallet.ID }}" method="post">
+      <button class="uk-button uk-button-primary">Вывести</button>
+    </form>
   </div>
   <div class="uk-width-expand@m">
     <table class="uk-table uk-table-divider uk-table-striped">

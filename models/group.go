@@ -22,6 +22,12 @@ type Group struct {
 	Counters GroupCounters `gorm:"-"`
 }
 
+type GroupWithCounters struct {
+	Group
+	Balance float64
+	Count   int
+}
+
 // CreateGroup save new group in db
 func CreateGroup(name string, ownerID uint) (group *Group, err error) {
 	group = new(Group)
@@ -36,6 +42,25 @@ func CreateGroup(name string, ownerID uint) (group *Group, err error) {
 // GetUserGroups return groups where user has access
 func GetUserGroups(userID uint) (res []Group, err error) {
 	err = NewGroupQuerySet(db).OwnerIDEq(userID).All(&res)
+	return
+}
+
+// GetUserGroupsWithCounters return groups where user has access
+func GetUserGroupsWithCounters(userID uint) (res []GroupWithCounters, err error) {
+	sql := `SELECT groups.*, balance, count
+	FROM groups
+	LEFT JOIN (
+		SELECT
+		  SUM(balance) as balance,
+			count() as count,
+			group_id
+		FROM wallets
+		WHERE "wallets"."deleted_at" IS NULL
+		)
+	ON group_id = id
+	WHERE owner_id = ?
+	  AND "groups"."deleted_at" IS NULL`
+	err = db.Raw(sql, userID).Scan(&res).Error
 	return
 }
 

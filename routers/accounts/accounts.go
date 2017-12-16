@@ -25,3 +25,15 @@ func Create(ctx *context.Context, af models.AuthForm) {
 func Setting(ctx *context.Context) {
 	ctx.HTML(200, "account/setting")
 }
+
+// SaveSetting shows user setting
+func SaveSetting(ctx *context.Context) {
+	ctx.User.LocalBitcoinsKey = ctx.Query("key")
+	ctx.User.LocalBitcoinsSecret = ctx.Query("secret")
+	err := ctx.User.Update(models.DB(), models.UserDBSchema.LocalBitcoinsKey, models.UserDBSchema.LocalBitcoinsSecret)
+	if ctx.HasError(err) {
+		return
+	}
+	ctx.Flash.Success("Настройки сохранены")
+	ctx.Redirect("/setting")
+}

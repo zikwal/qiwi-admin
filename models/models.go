@@ -40,5 +40,10 @@ func NewContext() (err error) {
 		&Group{},
 		&App{},
 		&Autotransfer{}).Error
+	if err != nil {
+		return
+	}
+
+	err = NewStormContext()
 	return
 }

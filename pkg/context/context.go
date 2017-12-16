@@ -7,6 +7,7 @@ package context
 import (
 	"github.com/go-macaron/session"
 	"github.com/zhuharev/qiwi-admin/models"
+	"github.com/zhuharev/qiwi-admin/pkg/log"
 	"github.com/zhuharev/qiwi-admin/pkg/setting"
 	macaron "gopkg.in/macaron.v1"
 )
@@ -40,6 +41,7 @@ func Contexter() macaron.Handler {
 					return
 				}
 				ctx.User = user
+				c.Data["User"] = user
 			}
 		}
 
@@ -62,8 +64,9 @@ func (ctx *Context) HTML(code int, tmplName string, other ...interface{}) {
 }
 
 // HasError check passed err and write resposne if err!=nil
-func (ctx *Context) HasError(err error) bool {
+func (ctx *Context) HasError(err error, args ...interface{}) bool {
 	if err != nil {
+		log.Trace(err, args...)
 		ctx.Flash.Error(err.Error())
 		if ctx.User != nil {
 			ctx.Redirect("/dashboard")

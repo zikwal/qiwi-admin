@@ -12,3 +12,16 @@
     <button>Добавить</button>
   </div>
 </form>
+
+<h4>Настройка биржи localbitcoins.net</h4>
+<form action="/account/setting" method="post">
+  <div class="uk-margin">
+    <label for="key">Ключ</label>
+    <input class="uk-input" type="text" name="key" id="key" value="{{ .User.LocalBitcoinsKey }}">
+  </div>
+  <div class="uk-margin">
+    <label for="secret">Секрет</label>
+    <input class="uk-input" type="text" name="secret" id="secret" value="{{ .User.LocalBitcoinsSecret }}">
+  </div>
+  <button class="uk-button uk-button-primary">Сохранить</button>
+</form>

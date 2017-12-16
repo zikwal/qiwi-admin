@@ -1,0 +1,12 @@
+<h2>Обмен</h2>
+
+<form action="">
+  <div class="uk-margin">
+    <select class="uk-select" name="group_id" id="">{{ range .groups }}
+      <option value="{{ .ID }}">{{ .Name }} ({{  .Balance  }}) </option>{{ end }}
+    </select>
+  </div>
+  <div class="uk-margin">
+    <button class="uk-button">Обмен</button>
+  </div>
+</form>
