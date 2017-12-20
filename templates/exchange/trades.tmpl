@@ -1,0 +1,7 @@
+<h1>История трэйдов</h1>
+{{ range .trades }}
+<h2>Трэйд {{ .ID }}</h2>
+{{ range  .Events }}{{ .Msg }}<br>
+{{ end }}
+<br><br>
+{{ end }}

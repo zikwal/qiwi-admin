@@ -121,6 +121,7 @@ func startWeb(ctx *cli.Context) {
 	m.Group("/exchange", func() {
 		m.Get("/", exchange.Index)
 		m.Post("/wallets/:id", exchange.Wallet)
+		m.Get("/trades", exchange.Trades)
 	}, auth.MustAuthorized)
 
 	m.Any("/transfer", transfers.Transfer, auth.MustAuthorized)

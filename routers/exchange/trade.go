@@ -51,3 +51,13 @@ func Wallet(ctx *context.Context) {
 	ctx.Flash.Success("Деньги успешно переведены")
 	ctx.Redirect("/exchange")
 }
+
+// Trades starts trade from group
+func Trades(ctx *context.Context) {
+	trades, err := models.GetUserTrades(ctx.User.ID)
+	if ctx.HasError(err) {
+		return
+	}
+	ctx.Data["trades"] = trades
+	ctx.HTML(200, "exchange/trades")
+}

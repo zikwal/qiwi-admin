@@ -40,6 +40,7 @@ func TradeWallet(key, secret string, wallet models.Wallet) (trade *models.Trade,
 		InitialBalance: wallet.Balance,
 		OutgoingAmount: amount,
 		GroupID:        wallet.GroupID,
+		CreatedBy:      wallet.OwnerID,
 	}
 	err = models.InitializeTrade(trade)
 	if err != nil {

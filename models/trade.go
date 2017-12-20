@@ -46,7 +46,7 @@ type Trade struct {
 
 	ChoosenAd int
 
-	CreatedBy uint
+	CreatedBy uint      `storm:"index"`
 	CreatedAt time.Time `storm:"index"`
 }
 
@@ -125,4 +125,17 @@ func TradeAddEvent(trade *Trade, event TradeEvent, newStates ...TradeState) erro
 type RejectedAd struct {
 	ID     int
 	Reason string
+}
+
+// GetUserTrades returns user trades
+func GetUserTrades(userID uint) (trades []Trade, err error) {
+	// TODO: filter by userID
+	var tmpTrades []Trade
+	err = stormDB.All(&trades)
+	for _, trade := range tmpTrades {
+		if trade.CreatedBy == userID {
+			trades = append(trades, trade)
+		}
+	}
+	return
 }
